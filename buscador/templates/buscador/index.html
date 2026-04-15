@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poupatempo — Buscador</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Rawline", sans-serif;
+            background: #ffffff;
+            color: #303030;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <pt-buscador-campo></pt-buscador-campo>
+
+        <section id="results-section">
+            <pt-buscador-indice-pesquisa id="buscador"></pt-buscador-indice-pesquisa>
+        </section>
+
+        <section id="agentforce-section">
+            <pt-buscador-agentforce id="agentforce"></pt-buscador-agentforce>
+        </section>
+    </main>
+
+    <script type="module" src="{% static 'buscador/buscador.django.js' %}"></script>
+
+</body>
+</html>
