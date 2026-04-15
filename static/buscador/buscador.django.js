@@ -794,6 +794,7 @@ class PtBuscadorIndicePesquisa extends i {
     super();
     __publicField(this, "_searchTermValue", "");
     this.searchApiUrl = "/api/services/search";
+    this.orquestradorApiUrl = "";
     this.orquestradorClientId = "";
     this.orquestradorClientSecret = "";
     this._hasSearched = false;
@@ -921,6 +922,7 @@ class PtBuscadorIndicePesquisa extends i {
   async _fetchServices(term) {
     const url = `${this.searchApiUrl}?pergunta=${encodeURIComponent(term)}`;
     const headers = { "Content-Type": "application/json" };
+    if (this.orquestradorApiUrl) headers["x-orquestrador-api-url"] = this.orquestradorApiUrl;
     if (this.orquestradorClientId) headers["client_id"] = this.orquestradorClientId;
     if (this.orquestradorClientSecret) headers["client_secret"] = this.orquestradorClientSecret;
     const res = await fetch(url, { headers });
@@ -1196,6 +1198,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$3`
 // ─── Reactive properties ──────────────────────────────────────────────────
 __publicField(PtBuscadorIndicePesquisa, "properties", {
   searchApiUrl: { attribute: "search-api-url" },
+  orquestradorApiUrl: { attribute: "orquestrador-api-url" },
   orquestradorClientId: { attribute: "orquestrador-client-id" },
   orquestradorClientSecret: { attribute: "orquestrador-client-secret" },
   _hasSearched: { state: true },
@@ -1215,6 +1218,9 @@ class PtBuscadorAgentforce extends i {
     __publicField(this, "_msgCounter", 0);
     __publicField(this, "_shouldFocusFollowUp", false);
     this.apiBaseUrl = "/api";
+    this.sfInstanceUrl = "";
+    this.sfClientId = "";
+    this.sfClientSecret = "";
     this._messages = [];
     this._isLoading = false;
     this._hasError = false;
@@ -1301,9 +1307,13 @@ class PtBuscadorAgentforce extends i {
     }
   }
   async _sfPost(body) {
+    const headers = { "Content-Type": "application/json" };
+    if (this.sfInstanceUrl) headers["sf-instance-url"] = this.sfInstanceUrl;
+    if (this.sfClientId) headers["sf-client-id"] = this.sfClientId;
+    if (this.sfClientSecret) headers["sf-client-secret"] = this.sfClientSecret;
     const res = await fetch(`${this.apiBaseUrl}/buscadorAgentforce/`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(body)
     });
     return res.json();
@@ -1708,6 +1718,9 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$3`
 // ─── Reactive properties ──────────────────────────────────────────────────
 __publicField(PtBuscadorAgentforce, "properties", {
   apiBaseUrl: { attribute: "api-base-url" },
+  sfInstanceUrl: { attribute: "sf-instance-url" },
+  sfClientId: { attribute: "sf-client-id" },
+  sfClientSecret: { attribute: "sf-client-secret" },
   _messages: { state: true },
   _isLoading: { state: true },
   _hasError: { state: true },
@@ -1727,8 +1740,14 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!buscador) return;
   if (agentforceSection) agentforceSection.style.display = "none";
   buscador.searchApiUrl = "/api/services/search";
+  buscador.orquestradorApiUrl = _cfg.orquestradorApiUrl;
   buscador.orquestradorClientId = _cfg.orquestradorClientId;
   buscador.orquestradorClientSecret = _cfg.orquestradorClientSecret;
+  if (agentforce) {
+    agentforce.sfInstanceUrl = _cfg.sfInstanceUrl;
+    agentforce.sfClientId = _cfg.sfClientId;
+    agentforce.sfClientSecret = _cfg.sfClientSecret;
+  }
   function showResults() {
     resultsSection.style.display = "block";
     agentforceSection.style.display = "none";

@@ -5,6 +5,8 @@ Rotas tratadas:
   POST /api/buscadorAgentforce/  →  Salesforce /services/apexrest/buscadorAgentforce/
   GET  /api/services/search      →  Orquestrador API
 
+Prioridade das credenciais: headers da requisição (embutidos no JS) > settings/.env
+
 Dependência: pip install requests
 """
 
@@ -19,24 +21,24 @@ from django.utils.decorators import method_decorator
 
 
 # ─── Cache de token Salesforce (em memória, por processo) ────────────────────
+# Chaveado por (instance_url, client_id) para suportar credenciais dinâmicas.
 
-_sf_token_lock   = threading.Lock()
-_sf_access_token = None
+_sf_token_lock  = threading.Lock()
+_sf_token_cache = {}   # {(instance_url, client_id): access_token}
 
 
-def _get_sf_token():
-    global _sf_access_token
-
+def _get_sf_token(instance_url, client_id, client_secret):
+    key = (instance_url, client_id)
     with _sf_token_lock:
-        if _sf_access_token:
-            return _sf_access_token
+        if _sf_token_cache.get(key):
+            return _sf_token_cache[key]
 
         resp = requests.post(
-            f"{settings.SF_INSTANCE_URL}/services/oauth2/token",
+            f"{instance_url}/services/oauth2/token",
             data={
                 "grant_type":    "client_credentials",
-                "client_id":     settings.SF_CLIENT_ID,
-                "client_secret": settings.SF_CLIENT_SECRET,
+                "client_id":     client_id,
+                "client_secret": client_secret,
             },
             timeout=10,
         )
@@ -46,14 +48,15 @@ def _get_sf_token():
                 f"Falha na autenticação Salesforce ({resp.status_code}): {resp.text}"
             )
 
-        _sf_access_token = resp.json()["access_token"]
-        return _sf_access_token
+        token = resp.json()["access_token"]
+        _sf_token_cache[key] = token
+        return token
 
 
-def _invalidate_sf_token():
-    global _sf_access_token
+def _invalidate_sf_token(instance_url, client_id):
+    key = (instance_url, client_id)
     with _sf_token_lock:
-        _sf_access_token = None
+        _sf_token_cache.pop(key, None)
 
 
 # ─── Proxy Salesforce ─────────────────────────────────────────────────────────
@@ -65,11 +68,15 @@ class BuscadorAgentforceView(View):
     SF_APEX_PATH = "/services/apexrest/buscadorAgentforce/"
 
     def post(self, request):
-        sf_url = f"{settings.SF_INSTANCE_URL}{self.SF_APEX_PATH}"
+        # Credenciais: JS envia nos headers; fallback para settings/.env
+        sf_instance_url  = request.headers.get("sf-instance-url")  or settings.SF_INSTANCE_URL
+        sf_client_id     = request.headers.get("sf-client-id")     or settings.SF_CLIENT_ID
+        sf_client_secret = request.headers.get("sf-client-secret") or settings.SF_CLIENT_SECRET
+        sf_url = f"{sf_instance_url}{self.SF_APEX_PATH}"
 
         for attempt in range(2):
             try:
-                token = _get_sf_token()
+                token = _get_sf_token(sf_instance_url, sf_client_id, sf_client_secret)
             except RuntimeError as exc:
                 return JsonResponse(
                     {"success": False, "errorMessage": str(exc)}, status=502
@@ -91,10 +98,16 @@ class BuscadorAgentforceView(View):
                 )
 
             if sf_resp.status_code == 401 and attempt == 0:
-                _invalidate_sf_token()
+                _invalidate_sf_token(sf_instance_url, sf_client_id)
                 continue
 
-            return JsonResponse(sf_resp.json(), status=sf_resp.status_code, safe=False)
+            try:
+                return JsonResponse(sf_resp.json(), status=sf_resp.status_code, safe=False)
+            except Exception:
+                return JsonResponse(
+                    {"success": False, "errorMessage": f"Resposta inválida do Salesforce ({sf_resp.status_code})"},
+                    status=502,
+                )
 
         return JsonResponse(
             {"success": False, "errorMessage": "Token inválido após renovação."}, status=502
@@ -107,16 +120,16 @@ class BuscadorAgentforceView(View):
 class BuscadorSearchView(View):
     """GET /api/services/search → Orquestrador
 
-    Prioridade das credenciais: headers da requisição (embutidos no JS) > settings/.env
+    Prioridade: headers da requisição (embutidos no JS) > settings/.env
     """
 
     def get(self, request):
-        # Credenciais: JS envia nos headers; fallback para settings
-        client_id     = request.headers.get("client_id")     or getattr(settings, "ORQUESTRADOR_CLIENT_ID",     "")
-        client_secret = request.headers.get("client_secret") or getattr(settings, "ORQUESTRADOR_CLIENT_SECRET", "")
+        api_url       = request.headers.get("x-orquestrador-api-url") or settings.ORQUESTRADOR_API_URL
+        client_id     = request.headers.get("client_id")              or getattr(settings, "ORQUESTRADOR_CLIENT_ID",     "")
+        client_secret = request.headers.get("client_secret")          or getattr(settings, "ORQUESTRADOR_CLIENT_SECRET", "")
 
         query_string = request.GET.urlencode()
-        url = f"{settings.ORQUESTRADOR_API_URL}?{query_string}" if query_string else settings.ORQUESTRADOR_API_URL
+        url = f"{api_url}?{query_string}" if query_string else api_url
 
         try:
             resp = requests.get(
@@ -131,7 +144,10 @@ class BuscadorSearchView(View):
         except requests.RequestException as exc:
             return JsonResponse({"error": str(exc)}, status=502)
 
-        return JsonResponse(resp.json(), status=resp.status_code, safe=False)
+        try:
+            return JsonResponse(resp.json(), status=resp.status_code, safe=False)
+        except Exception:
+            return JsonResponse({"error": f"Resposta inválida do Orquestrador ({resp.status_code})"}, status=502)
 
 
 # ─── View da página ──────────────────────────────────────────────────────────
