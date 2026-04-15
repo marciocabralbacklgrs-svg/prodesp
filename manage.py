@@ -3,11 +3,6 @@
 import os
 import sys
 
-# Garante que o diretório do projeto está no Python path (necessário no Render)
-_here = os.path.dirname(os.path.abspath(__file__))
-if _here not in sys.path:
-    sys.path.insert(0, _here)
-
 
 def main():
     """Run administrative tasks."""
