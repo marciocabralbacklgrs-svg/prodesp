@@ -786,19 +786,20 @@ __publicField(PtBuscadorCampo, "properties", {
   frequentSearches: { type: Array, attribute: "frequent-searches" }
 });
 customElements.define("pt-buscador-campo", PtBuscadorCampo);
-const ALL_SERVICES = [];
 const PAGE_SIZE = 5;
 class PtBuscadorIndicePesquisa extends i {
   // ─── Constructor ──────────────────────────────────────────────────────────
   constructor() {
     super();
     __publicField(this, "_searchTermValue", "");
+    __publicField(this, "_abortController", null);
     this.searchApiUrl = "/api/services/search";
     this.orquestradorApiUrl = "";
     this.orquestradorClientId = "";
     this.orquestradorClientSecret = "";
     this._hasSearched = false;
     this._isLoading = false;
+    this._hasError = false;
     this._currentPage = 1;
     this._results = [];
   }
@@ -812,12 +813,18 @@ class PtBuscadorIndicePesquisa extends i {
   get searchTerm() {
     return this._searchTermValue;
   }
+  // ─── Lifecycle ────────────────────────────────────────────────────────────
+  disconnectedCallback() {
+    var _a2;
+    super.disconnectedCallback();
+    (_a2 = this._abortController) == null ? void 0 : _a2.abort();
+  }
   // ─── Computed ─────────────────────────────────────────────────────────────
   get _hasResults() {
     return this._hasSearched && !this._isLoading && this._results.length > 0;
   }
   get _hasNoResults() {
-    return this._hasSearched && !this._isLoading && this._results.length === 0;
+    return this._hasSearched && !this._isLoading && !this._hasError && this._results.length === 0;
   }
   get _totalResults() {
     return this._results.length;
@@ -876,56 +883,50 @@ class PtBuscadorIndicePesquisa extends i {
     const page = parseInt(event.currentTarget.dataset.page, 10);
     if (page && page !== this._currentPage) {
       this._currentPage = page;
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }
   prevPage() {
     if (this._hasPrev) {
       this._currentPage -= 1;
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }
   nextPage() {
     if (this._hasNext) {
       this._currentPage += 1;
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }
   // ─── Private helpers ──────────────────────────────────────────────────────
   _doSearch() {
+    var _a2;
     const term = this._searchTermValue.trim();
     if (!term) return;
+    (_a2 = this._abortController) == null ? void 0 : _a2.abort();
+    this._abortController = new AbortController();
     this._isLoading = true;
+    this._hasError = false;
     this._hasSearched = false;
     this._currentPage = 1;
-    this._fetchServices(term).then((results) => {
+    this._fetchServices(term, this._abortController.signal).then((results) => {
       this._results = results;
       this._isLoading = false;
       this._hasSearched = true;
       if (results.length === 0) {
         this.dispatchEvent(new CustomEvent("noresults", { bubbles: true, composed: true }));
       }
-    }).catch(() => {
-      const words = term.toLowerCase().split(/\s+/).filter((w) => w.length >= 3);
-      const matchFn = (text) => words.some((w) => text.toLowerCase().includes(w));
-      const fallback = ALL_SERVICES.filter(
-        (s2) => matchFn(s2.title) || matchFn(s2.description) || s2.tags.some((t2) => matchFn(t2))
-      );
-      this._results = fallback;
+    }).catch((err) => {
+      if (err.name === "AbortError") return;
       this._isLoading = false;
       this._hasSearched = true;
-      if (fallback.length === 0) {
-        this.dispatchEvent(new CustomEvent("noresults", { bubbles: true, composed: true }));
-      }
+      this._hasError = true;
     });
   }
-  async _fetchServices(term) {
+  async _fetchServices(term, signal) {
     const url = `${this.searchApiUrl}?pergunta=${encodeURIComponent(term)}`;
     const headers = { "Content-Type": "application/json" };
     if (this.orquestradorApiUrl) headers["x-orquestrador-api-url"] = this.orquestradorApiUrl;
     if (this.orquestradorClientId) headers["client_id"] = this.orquestradorClientId;
     if (this.orquestradorClientSecret) headers["client_secret"] = this.orquestradorClientSecret;
-    const res = await fetch(url, { headers });
+    const res = await fetch(url, { headers, signal });
     if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
     const raw = await res.json();
     const data = typeof raw === "string" ? JSON.parse(raw) : raw;
@@ -959,6 +960,10 @@ class PtBuscadorIndicePesquisa extends i {
                                 <div class="skeleton-bar skeleton-bar--tags"></div>
                             </div>
                         `)}
+                    </div>
+                ` : this._hasSearched && this._hasError ? b`
+                    <div class="search-results">
+                        <p class="error-message" role="alert">Não foi possível carregar os resultados. Tente novamente em alguns instantes.</p>
                     </div>
                 ` : this._hasNoResults ? b`
                     <div class="search-results">
@@ -1145,6 +1150,12 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$3`
             border-top: 1px solid var(--color-divider);
         }
 
+        .error-message {
+            font-size: 16px; font-weight: 400; color: #8e030f;
+            line-height: 24px; margin: 0; padding: 24px 0;
+            border-top: 1px solid var(--color-divider);
+        }
+
         /* ─── Service cards ─── */
         .service-list { display: flex; flex-direction: column; }
         .service-card {
@@ -1203,6 +1214,7 @@ __publicField(PtBuscadorIndicePesquisa, "properties", {
   orquestradorClientSecret: { attribute: "orquestrador-client-secret" },
   _hasSearched: { state: true },
   _isLoading: { state: true },
+  _hasError: { state: true },
   _currentPage: { state: true },
   _results: { state: true }
 });
@@ -1217,6 +1229,7 @@ class PtBuscadorAgentforce extends i {
     __publicField(this, "_sequenceId", 1);
     __publicField(this, "_msgCounter", 0);
     __publicField(this, "_shouldFocusFollowUp", false);
+    __publicField(this, "_pendingTimers", []);
     this.apiBaseUrl = "/api";
     this.sfInstanceUrl = "";
     this.sfClientId = "";
@@ -1259,6 +1272,8 @@ class PtBuscadorAgentforce extends i {
   }
   disconnectedCallback() {
     super.disconnectedCallback();
+    this._pendingTimers.forEach((id) => clearTimeout(id));
+    this._pendingTimers = [];
     if (this._sessionId) this._endAgentSession();
   }
   // ─── Event handlers ───────────────────────────────────────────────────────
@@ -1316,6 +1331,7 @@ class PtBuscadorAgentforce extends i {
       headers,
       body: JSON.stringify(body)
     });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
   }
   async _initSession() {
@@ -1356,11 +1372,11 @@ class PtBuscadorAgentforce extends i {
         m2.actionCopied = true;
         m2.showCopiedToast = true;
         m2.copyBtnClass = cls(true);
-        setTimeout(() => {
+        this._pendingTimers.push(setTimeout(() => {
           this._messages = this._messages.map(
             (m22) => m22.id !== msgId ? m22 : { ...m22, actionCopied: false, showCopiedToast: false, copyBtnClass: cls(false) }
           );
-        }, 3e3);
+        }, 3e3));
       } else if (action === "like") {
         m2.actionLiked = !msg.actionLiked;
         m2.actionDisliked = false;
@@ -1374,11 +1390,11 @@ class PtBuscadorAgentforce extends i {
       } else if (action === "share") {
         m2.actionShared = true;
         m2.shareBtnClass = cls(true);
-        setTimeout(() => {
+        this._pendingTimers.push(setTimeout(() => {
           this._messages = this._messages.map(
             (m22) => m22.id !== msgId ? m22 : { ...m22, actionShared: false, shareBtnClass: cls(false) }
           );
-        }, 3e3);
+        }, 3e3));
       }
       return m2;
     });
@@ -1425,11 +1441,11 @@ class PtBuscadorAgentforce extends i {
     this._errorMessage = ((_a2 = error.body) == null ? void 0 : _a2.message) || error.message || "Ocorreu um erro inesperado.";
   }
   _scrollDown() {
-    setTimeout(() => {
+    this._pendingTimers.push(setTimeout(() => {
       var _a2;
       const el = (_a2 = this.shadowRoot) == null ? void 0 : _a2.querySelector(".chatbox-messages");
       if (el) el.scrollTop = el.scrollHeight;
-    }, 100);
+    }, 100));
   }
   // ─── Template ─────────────────────────────────────────────────────────────
   render() {
