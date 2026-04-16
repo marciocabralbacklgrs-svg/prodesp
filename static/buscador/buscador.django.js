@@ -1912,7 +1912,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$3`
 
             font-family: 'Rawline', system-ui, -apple-system, sans-serif;
             display: block;
-            padding: var(--space-5) var(--space-3) 0; /* 40px 24px 0 */
+            padding: var(--space-5) var(--space-3) var(--space-2); /* 40px 24px 16px — espaço p/ sombra inferior */
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -2311,9 +2311,12 @@ document.addEventListener("DOMContentLoaded", () => {
     agentforce.sfClientId = _cfg.sfClientId;
     agentforce.sfClientSecret = _cfg.sfClientSecret;
   }
+  const CHAT_TRANSITION_MS = 600;
   function showResults() {
     if (agentforceSection) agentforceSection.classList.remove("open");
-    if (resultsSection) resultsSection.style.display = "block";
+    setTimeout(() => {
+      if (resultsSection) resultsSection.style.display = "block";
+    }, CHAT_TRANSITION_MS);
   }
   function showChat(term) {
     if (resultsSection) resultsSection.style.display = "none";
