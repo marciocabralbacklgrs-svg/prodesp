@@ -124,9 +124,10 @@ class BuscadorSearchView(View):
     """
 
     def get(self, request):
-        api_url       = request.headers.get("x-orquestrador-api-url") or settings.ORQUESTRADOR_API_URL
-        client_id     = request.headers.get("client_id")              or getattr(settings, "ORQUESTRADOR_CLIENT_ID",     "")
-        client_secret = request.headers.get("client_secret")          or getattr(settings, "ORQUESTRADOR_CLIENT_SECRET", "")
+        # Credenciais vêm das env vars (headers com underscore são removidos pelo nginx do Render)
+        api_url       = settings.ORQUESTRADOR_API_URL
+        client_id     = getattr(settings, "ORQUESTRADOR_CLIENT_ID",     "")
+        client_secret = getattr(settings, "ORQUESTRADOR_CLIENT_SECRET", "")
 
         query_string = request.GET.urlencode()
         url = f"{api_url}?{query_string}" if query_string else api_url

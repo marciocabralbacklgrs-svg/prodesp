@@ -1739,7 +1739,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const agentforceSection = document.getElementById("agentforce-section");
   if (!buscador) return;
   if (agentforceSection) agentforceSection.style.display = "none";
-  buscador.searchApiUrl = _cfg.orquestradorApiUrl;
+  buscador.searchApiUrl = "/api/services/search";
   buscador.orquestradorClientId = _cfg.orquestradorClientId;
   buscador.orquestradorClientSecret = _cfg.orquestradorClientSecret;
   if (agentforce) {
