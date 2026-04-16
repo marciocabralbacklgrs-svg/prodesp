@@ -13,6 +13,15 @@
             color: #303030;
             min-height: 100vh;
         }
+
+        #agentforce-section {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.45s ease;
+        }
+        #agentforce-section.open {
+            max-height: 2000px;
+        }
     </style>
 </head>
 <body>

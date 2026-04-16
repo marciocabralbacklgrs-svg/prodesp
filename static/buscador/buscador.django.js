@@ -777,7 +777,7 @@ __publicField(PtBuscadorCampo, "styles", [rawlineFont, i$3`
             border: none;
             padding: 0;
             cursor: pointer;
-            color: var(--color-n700);    /* Neutra 700 */
+            color: var(--color-accent);  /* Vermelho UI Kit */
             flex-shrink: 0;
             transition: color 0.15s ease;
         }
@@ -2303,7 +2303,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultsSection = document.getElementById("results-section");
   const agentforceSection = document.getElementById("agentforce-section");
   if (!buscador) return;
-  if (agentforceSection) agentforceSection.style.display = "none";
   buscador.searchApiUrl = "/api/services/search";
   buscador.orquestradorClientId = _cfg.orquestradorClientId;
   buscador.orquestradorClientSecret = _cfg.orquestradorClientSecret;
@@ -2313,12 +2312,12 @@ document.addEventListener("DOMContentLoaded", () => {
     agentforce.sfClientSecret = _cfg.sfClientSecret;
   }
   function showResults() {
-    resultsSection.style.display = "block";
-    agentforceSection.style.display = "none";
+    if (agentforceSection) agentforceSection.classList.remove("open");
+    if (resultsSection) resultsSection.style.display = "block";
   }
   function showChat(term) {
-    resultsSection.style.display = "none";
-    agentforceSection.style.display = "block";
+    if (resultsSection) resultsSection.style.display = "none";
+    if (agentforceSection) agentforceSection.classList.add("open");
     if (agentforce) {
       agentforce.searchTerm = "";
       requestAnimationFrame(() => {
