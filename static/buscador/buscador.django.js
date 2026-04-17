@@ -993,15 +993,14 @@ class PtBuscadorIndicePesquisa extends i {
     const raw = await res.json();
     const data = typeof raw === "string" ? JSON.parse(raw) : raw;
     if (!data.resultados) return data.results ?? [];
-    return data.resultados.map((item) => {
+    return data.resultados.map((item, index) => {
       var _a2, _b, _c;
-      return {
-        id: item.id,
-        title: item.name,
-        description: ((_a2 = item.detalhes) == null ? void 0 : _a2.servico) ?? "",
-        tags: [(_b = item.detalhes) == null ? void 0 : _b.tipoServico].filter(Boolean),
-        link: ((_c = item.detalhes) == null ? void 0 : _c.canalWeb) ?? "#"
-      };
+      const id = (item == null ? void 0 : item.id) ?? `${term}-${index}`;
+      const title = (item == null ? void 0 : item.name) || "";
+      const description = ((_a2 = item == null ? void 0 : item.detalhes) == null ? void 0 : _a2.servico) || "";
+      const tipoServico = (_b = item == null ? void 0 : item.detalhes) == null ? void 0 : _b.tipoServico;
+      const link = "https://poupatempo.sp.gov.br/carta/" + ((_c = item == null ? void 0 : item.detalhes) == null ? void 0 : _c.idServico) || "#";
+      return { id, title, description, tags: tipoServico ? [tipoServico] : [], link };
     });
   }
   // ─── Template ─────────────────────────────────────────────────────────────
