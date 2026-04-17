@@ -627,13 +627,14 @@ class PtBuscadorCampo extends i {
                 <div class="search-inner">
                     <h2 class="search-title">${this.title}</h2>
 
-                    <div class="search-bar">
+                    <div class="search-bar" data-id="search-bar">
                         <input class="search-input" type="text"
+                            data-id="search-input"
                             placeholder=${this.placeholder}
                             aria-label="Campo de busca"
                             @input=${this._handleInput}
                             @keydown=${this._handleKeyDown} />
-                        <button class="search-btn" type="button" aria-label="Buscar"
+                        <button class="search-btn" type="button" data-id="search-btn" aria-label="Buscar"
                             @click=${this._doSearch}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2"
@@ -651,6 +652,7 @@ class PtBuscadorCampo extends i {
                             <div class="frequent-pills" role="group" aria-label="Buscas frequentes">
                                 ${this.frequentSearches.map((label) => b`
                                     <button class="frequent-pill" type="button"
+                                        data-id="frequent-pill"
                                         data-label=${label}
                                         @click=${this._handlePill}>
                                         ${label}
