@@ -876,6 +876,12 @@ class PtBuscadorIndicePesquisa extends i {
   get searchTerm() {
     return this._searchTermValue;
   }
+  getAnchorOffsetTop() {
+    var _a2;
+    const anchor = (_a2 = this.shadowRoot) == null ? void 0 : _a2.querySelector("[data-results-anchor]");
+    if (!anchor) return 0;
+    return Math.round(anchor.getBoundingClientRect().top - this.getBoundingClientRect().top);
+  }
   // ─── Lifecycle ────────────────────────────────────────────────────────────
   disconnectedCallback() {
     var _a2;
@@ -1004,7 +1010,7 @@ class PtBuscadorIndicePesquisa extends i {
             <div class="buscador-wrapper">
 
                 ${this._isLoading ? b`
-                    <div class="skeleton-container" role="status" aria-live="polite" aria-label="Carregando resultados">
+                    <div class="skeleton-container" data-id="results-loading" role="status" aria-live="polite" aria-label="Carregando resultados">
                         <div class="loading-label-wrapper">
                             <span class="loading-text">Carregando resultados</span>
                             <span class="loading-dots" aria-hidden="true"></span>
@@ -1026,11 +1032,11 @@ class PtBuscadorIndicePesquisa extends i {
                     </div>
 
                 ` : this._hasNoResults ? b`
-                    <div class="search-results">
-                        <div class="feedback-banner" role="region" aria-label="Feedback de pesquisa">
+                    <div class="search-results" data-results-anchor data-id="results-empty">
+                        <div class="feedback-banner" data-id="feedback-banner" role="region" aria-label="Feedback de pesquisa">
                             <span class="feedback-question">Encontrou o que precisava?</span>
                             <div class="feedback-actions">
-                                <button class="btn-feedback btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
+                                <button class="btn-feedback btn-feedback--filled" data-id="btn-nao-encontrei" type="button" @click=${this.handleNaoEncontrei}>
                                     Não encontrei
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
@@ -1038,17 +1044,17 @@ class PtBuscadorIndicePesquisa extends i {
                                 </button>
                             </div>
                         </div>
-                        <div class="results-count" aria-live="polite">
+                        <div class="results-count" data-id="results-count" aria-live="polite">
                             <strong class="results-number">0 resultados</strong>
                             <span class="results-suffix"> encontrados</span>
                         </div>
-                        <p class="no-results-message">Nenhum resultado encontrado para a sua busca. Tente outros termos ou explore os serviços disponíveis.</p>
+                        <p class="no-results-message" data-id="no-results-message">Nenhum resultado encontrado para a sua busca. Tente outros termos ou explore os serviços disponíveis.</p>
                     </div>
 
                 ` : this._hasResults ? b`
-                    <div class="search-results">
+                    <div class="search-results" data-results-anchor data-id="results-container">
 
-                        <div class="feedback-banner" role="region" aria-label="Feedback de pesquisa">
+                        <div class="feedback-banner" data-id="feedback-banner" role="region" aria-label="Feedback de pesquisa">
                             <span class="feedback-question">Encontrou o que precisava?</span>
                             <div class="feedback-actions">
                                 <!--<button class="btn-feedback btn-feedback--outlined" type="button">
@@ -1058,7 +1064,7 @@ class PtBuscadorIndicePesquisa extends i {
                                     </svg>
                                     Sim, encontrei
                                 </button>-->
-                                <button class="btn-feedback btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
+                                <button class="btn-feedback btn-feedback--filled" data-id="btn-nao-encontrei" type="button" @click=${this.handleNaoEncontrei}>
                                     Não encontrei
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
@@ -1067,16 +1073,16 @@ class PtBuscadorIndicePesquisa extends i {
                             </div>
                         </div>
 
-                        <div class="results-count" aria-live="polite">
+                        <div class="results-count" data-id="results-count" aria-live="polite">
                             <strong class="results-number">${this._totalResults} resultados</strong>
                             <span class="results-suffix"> encontrados</span>
                         </div>
 
-                        <div class="service-list" role="list">
+                        <div class="service-list" data-id="service-list" role="list">
                             ${this._displayedResults.map((s2) => b`
-                                <a class="service-card" role="listitem" href=${s2.link} target="_blank" rel="noopener noreferrer">
+                                <a class="service-card" data-id="service-card" role="listitem" href=${s2.link} target="_blank" rel="noopener noreferrer">
                                     <div class="service-card-content">
-                                        <h3 class="service-title">${s2.title}</h3>
+                                        <h3 class="service-title" data-id="service-title">${s2.title}</h3>
                                         <p class="service-desc">${s2.description}</p>
                                         <div class="service-tags">
                                             ${s2.tags.map((tag) => b`<span class="service-tag">${tag}</span>`)}
@@ -1092,8 +1098,8 @@ class PtBuscadorIndicePesquisa extends i {
                         </div>
 
                         ${this._showPagination ? b`
-                            <nav class="pagination" aria-label="Paginação de resultados">
-                                <button class="page-btn" type="button"
+                            <nav class="pagination" data-id="pagination" aria-label="Paginação de resultados">
+                                <button class="page-btn" data-id="pagination-prev" type="button"
                                     ?disabled=${!this._hasPrev} @click=${this.prevPage} aria-label="Página anterior">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <polyline points="15 18 9 12 15 6"/>
@@ -1101,7 +1107,7 @@ class PtBuscadorIndicePesquisa extends i {
                                 </button>
                                 ${this._paginationPages.map((pg) => b`
                                     <span class="page-item">
-                                        ${pg.isEllipsis ? b`<span class="page-ellipsis" aria-hidden="true">...</span>` : b`<button class=${pg.btnClass} type="button"
+                                        ${pg.isEllipsis ? b`<span class="page-ellipsis" aria-hidden="true">...</span>` : b`<button class=${pg.btnClass} data-id="pagination-page" type="button"
                                                     data-page=${pg.page} @click=${this.goToPage}
                                                     aria-label="Página ${pg.label}"
                                                     aria-current=${pg.btnClass.includes("active") ? "page" : "false"}>
@@ -1109,7 +1115,7 @@ class PtBuscadorIndicePesquisa extends i {
                                                 </button>`}
                                     </span>
                                 `)}
-                                <button class="page-btn" type="button"
+                                <button class="page-btn" data-id="pagination-next" type="button"
                                     ?disabled=${!this._hasNext} @click=${this.nextPage} aria-label="Próxima página">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <polyline points="9 18 15 12 9 6"/>
@@ -1164,6 +1170,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$3`
             font-family: 'Rawline', sans-serif;
             display: block;
             width: 100%;
+            padding: 0 var(--space-3); /* alinha com search-section e pt-buscador-agentforce */
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -1171,7 +1178,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$3`
         .buscador-wrapper {
             max-width: 894px;
             margin: 0 auto;
-            padding: var(--space-5) 0;  /* 40px — 5×8px */
+            padding: var(--space-5) 0;  /* 40px top — 5×8px */
             display: flex;
             flex-direction: column;
             gap: var(--space-4);        /* 32px */
@@ -1754,7 +1761,7 @@ class PtBuscadorAgentforce extends i {
   // ─── Template ─────────────────────────────────────────────────────────────
   render() {
     return b`
-            <div class="chatbox-panel">
+            <div class="chatbox-panel" data-id="chatbox-panel">
 
                 <div class="chatbox-header">
                     <div class="chatbox-header-left">
@@ -1768,7 +1775,7 @@ class PtBuscadorAgentforce extends i {
                     </div>
                     ${this._hasStartedConversation ? b`
                         <div class="header-actions">
-                            <button class="close-btn" type="button" @click=${this.handleClose}
+                            <button class="close-btn" data-id="chatbox-close-btn" type="button" @click=${this.handleClose}
                                 ?disabled=${this._isLoading} title="Fechar conversa" aria-label="Fechar">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
@@ -1779,7 +1786,7 @@ class PtBuscadorAgentforce extends i {
                 </div>
 
                 ${this._hasStartedConversation ? b`
-                    <div class="chatbox-messages" role="log" aria-live="polite">
+                    <div class="chatbox-messages" data-id="chatbox-messages" role="log" aria-live="polite">
                         ${this._messages.map((msg) => b`
                             <div class=${msg.wrapperClass}>
                                 ${msg.isUser ? b`
@@ -1844,7 +1851,7 @@ class PtBuscadorAgentforce extends i {
 
                     <div class="chatbox-footer">
                         <div class="chatbox-input-wrapper">
-                            <input type="text" class="chatbox-input"
+                            <input type="text" class="chatbox-input" data-id="chatbox-followup-input"
                                 placeholder="Tem mais alguma dúvida?"
                                 .value=${this._followUpQuery}
                                 @input=${this.handleFollowUpInput}
@@ -1852,7 +1859,7 @@ class PtBuscadorAgentforce extends i {
                                 ?disabled=${this._isLoading}
                                 aria-label="Campo de follow-up"
                             />
-                            <button class="chatbox-send-btn" type="button"
+                            <button class="chatbox-send-btn" data-id="chatbox-send-btn" type="button"
                                 @click=${this.handleFollowUp}
                                 ?disabled=${this.isFollowUpDisabled}
                                 aria-label="Enviar">
@@ -1912,7 +1919,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$3`
 
             font-family: 'Rawline', system-ui, -apple-system, sans-serif;
             display: block;
-            padding: var(--space-5) var(--space-3) var(--space-2); /* 40px 24px 16px — espaço p/ sombra inferior */
+            padding: 0 var(--space-3) var(--space-2); /* 0 24px 16px — top controlado pelo componente pai */
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -2311,22 +2318,44 @@ document.addEventListener("DOMContentLoaded", () => {
     agentforce.sfClientId = _cfg.sfClientId;
     agentforce.sfClientSecret = _cfg.sfClientSecret;
   }
-  const CHAT_TRANSITION_MS = 600;
+  const ANIM_MS = 380;
+  function getAgentforceTopOffset() {
+    const mainEl = resultsSection.parentElement;
+    const mainRect = mainEl.getBoundingClientRect();
+    const busRect = buscador.getBoundingClientRect();
+    const anchorOff = buscador.getAnchorOffsetTop ? buscador.getAnchorOffsetTop() : 0;
+    return Math.round(busRect.top - mainRect.top + anchorOff);
+  }
   function showResults() {
-    if (agentforceSection) agentforceSection.classList.remove("open");
+    agentforceSection.classList.remove("af-active", "af-reveal-down");
+    agentforceSection.classList.add("af-overlap", "af-wipe-up");
+    resultsSection.classList.remove("rs-hidden", "rs-wipe-down");
+    resultsSection.classList.add("rs-reveal-up");
     setTimeout(() => {
-      if (resultsSection) resultsSection.style.display = "block";
-    }, CHAT_TRANSITION_MS);
+      agentforceSection.classList.remove("af-overlap", "af-wipe-up");
+      agentforceSection.style.top = "";
+      resultsSection.classList.remove("rs-reveal-up");
+    }, ANIM_MS);
   }
   function showChat(term) {
-    if (resultsSection) resultsSection.style.display = "none";
-    if (agentforceSection) agentforceSection.classList.add("open");
+    const topPx = getAgentforceTopOffset();
+    resultsSection.classList.remove("rs-reveal-up");
+    resultsSection.classList.add("rs-wipe-down");
+    agentforceSection.style.top = `${topPx}px`;
+    agentforceSection.classList.add("af-overlap", "af-reveal-down");
     if (agentforce) {
       agentforce.searchTerm = "";
       requestAnimationFrame(() => {
         agentforce.searchTerm = term;
       });
     }
+    setTimeout(() => {
+      resultsSection.classList.remove("rs-wipe-down");
+      resultsSection.classList.add("rs-hidden");
+      agentforceSection.classList.remove("af-overlap", "af-reveal-down");
+      agentforceSection.classList.add("af-active");
+      agentforceSection.style.top = "";
+    }, ANIM_MS);
   }
   document.addEventListener("buscador-search", (e2) => {
     var _a2;
