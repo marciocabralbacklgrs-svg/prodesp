@@ -1051,13 +1051,13 @@ class PtBuscadorIndicePesquisa extends i {
                         <div class="feedback-banner" role="region" aria-label="Feedback de pesquisa">
                             <span class="feedback-question">Encontrou o que precisava?</span>
                             <div class="feedback-actions">
-                                <button class="btn-feedback btn-feedback--outlined" type="button">
+                                <!--<button class="btn-feedback btn-feedback--outlined" type="button">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3z"/>
                                         <path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/>
                                     </svg>
                                     Sim, encontrei
-                                </button>
+                                </button>-->
                                 <button class="btn-feedback btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
                                     Não encontrei
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -1805,7 +1805,7 @@ class PtBuscadorAgentforce extends i {
                                                     <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
                                                 </svg>
                                             </button>
-                                            <button class=${msg.likeBtnClass} type="button"
+                                            <!--<button class=${msg.likeBtnClass} type="button"
                                                 @click=${() => this._handleMsgAction(msg.id, "like")} aria-label="Resposta útil">
                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                                     <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/>
@@ -1826,7 +1826,7 @@ class PtBuscadorAgentforce extends i {
                                                     <polyline points="16 6 12 2 8 6"/>
                                                     <line x1="12" y1="2" x2="12" y2="15"/>
                                                 </svg>
-                                            </button>
+                                            </button>-->
                                         </div>
                                         ${msg.showCopiedToast ? b`
                                             <span class="copied-toast" aria-live="polite">Copiado para a área de transferência</span>
