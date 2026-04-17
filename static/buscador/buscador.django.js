@@ -851,7 +851,7 @@ __publicField(PtBuscadorCampo, "properties", {
   frequentSearches: { type: Array, attribute: "frequent-searches" }
 });
 customElements.define("pt-buscador-campo", PtBuscadorCampo);
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 class PtBuscadorIndicePesquisa extends i {
   // ─── Constructor ──────────────────────────────────────────────────────────
   constructor() {
