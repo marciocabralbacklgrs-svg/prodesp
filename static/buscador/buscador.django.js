@@ -852,12 +852,18 @@ __publicField(PtBuscadorCampo, "properties", {
 });
 customElements.define("pt-buscador-campo", PtBuscadorCampo);
 const PAGE_SIZE = 10;
+const SEARCH_DEBOUNCE_MS = 300;
+const MIN_SEARCH_LENGTH = 2;
 class PtBuscadorIndicePesquisa extends i {
   // ─── Constructor ──────────────────────────────────────────────────────────
   constructor() {
     super();
     __publicField(this, "_searchTermValue", "");
     __publicField(this, "_abortController", null);
+    __publicField(this, "_debounceId", null);
+    __publicField(this, "_cache", /* @__PURE__ */ new Map());
+    __publicField(this, "_inFlightTerm", "");
+    __publicField(this, "_consecutiveErrors", 0);
     this.searchApiUrl = "/api/services/search";
     this.orquestradorApiUrl = "";
     this.orquestradorClientId = "";
@@ -869,11 +875,30 @@ class PtBuscadorIndicePesquisa extends i {
     this._results = [];
   }
   set searchTerm(value) {
-    const incoming = value || "";
-    if (incoming && incoming !== this._searchTermValue) {
-      this._searchTermValue = incoming;
-      this._doSearch();
+    var _a2;
+    const incoming = (value || "").trim();
+    if (this._debounceId) {
+      clearTimeout(this._debounceId);
+      this._debounceId = null;
     }
+    if (incoming === this._searchTermValue) return;
+    this._searchTermValue = incoming;
+    if (!incoming || incoming.length < MIN_SEARCH_LENGTH) {
+      (_a2 = this._abortController) == null ? void 0 : _a2.abort();
+      this._abortController = null;
+      this._inFlightTerm = "";
+      this._results = [];
+      this._isLoading = false;
+      this._hasSearched = false;
+      this._hasError = false;
+      this._currentPage = 1;
+      return;
+    }
+    if (incoming === this._inFlightTerm) return;
+    this._debounceId = setTimeout(() => {
+      this._debounceId = null;
+      this._doSearch();
+    }, SEARCH_DEBOUNCE_MS);
   }
   get searchTerm() {
     return this._searchTermValue;
@@ -888,7 +913,12 @@ class PtBuscadorIndicePesquisa extends i {
   disconnectedCallback() {
     var _a2;
     super.disconnectedCallback();
+    if (this._debounceId) {
+      clearTimeout(this._debounceId);
+      this._debounceId = null;
+    }
     (_a2 = this._abortController) == null ? void 0 : _a2.abort();
+    this._inFlightTerm = "";
   }
   // ─── Computed ─────────────────────────────────────────────────────────────
   get _hasResults() {
@@ -942,6 +972,11 @@ class PtBuscadorIndicePesquisa extends i {
   }
   // ─── Event handlers ───────────────────────────────────────────────────────
   handleSimEncontrei() {
+    this.dispatchEvent(new CustomEvent("found", {
+      bubbles: true,
+      composed: true,
+      detail: { searchTerm: this._searchTermValue }
+    }));
   }
   handleNaoEncontrei() {
     this.dispatchEvent(new CustomEvent("notfound", {
@@ -952,21 +987,39 @@ class PtBuscadorIndicePesquisa extends i {
   }
   goToPage(event) {
     const page = parseInt(event.currentTarget.dataset.page, 10);
-    if (page && page !== this._currentPage) this._currentPage = page;
+    if (page && page !== this._currentPage) {
+      this._currentPage = page;
+      this._scrollToResults();
+    }
   }
   prevPage() {
-    if (this._hasPrev) this._currentPage -= 1;
+    if (this._hasPrev) {
+      this._currentPage -= 1;
+      this._scrollToResults();
+    }
   }
   nextPage() {
-    if (this._hasNext) this._currentPage += 1;
+    if (this._hasNext) {
+      this._currentPage += 1;
+      this._scrollToResults();
+    }
   }
   // ─── Private helpers ──────────────────────────────────────────────────────
   _doSearch() {
     var _a2;
     const term = this._searchTermValue.trim();
-    if (!term) return;
+    if (!term || term.length < MIN_SEARCH_LENGTH) return;
+    if (term === this._inFlightTerm) return;
+    if (this._cache.has(term)) {
+      this._results = this._cache.get(term);
+      this._currentPage = 1;
+      this._hasSearched = true;
+      this._isLoading = false;
+      return;
+    }
     (_a2 = this._abortController) == null ? void 0 : _a2.abort();
     this._abortController = new AbortController();
+    this._inFlightTerm = term;
     this._isLoading = true;
     this._hasError = false;
     this._hasSearched = false;
@@ -975,14 +1028,37 @@ class PtBuscadorIndicePesquisa extends i {
       this._results = results;
       this._isLoading = false;
       this._hasSearched = true;
+      this._inFlightTerm = "";
+      this._consecutiveErrors = 0;
+      this._cache.set(term, results);
       if (results.length === 0)
-        this.dispatchEvent(new CustomEvent("noresults", { bubbles: true, composed: true }));
+        this.dispatchEvent(new CustomEvent("noresults", {
+          bubbles: true,
+          composed: true,
+          detail: { searchTerm: term }
+        }));
     }).catch((err) => {
       if (err.name === "AbortError") return;
       this._isLoading = false;
       this._hasSearched = true;
       this._hasError = true;
+      this._inFlightTerm = "";
+      this._consecutiveErrors += 1;
+      this.dispatchEvent(new CustomEvent("searcherror", {
+        bubbles: true,
+        composed: true,
+        detail: {
+          searchTerm: term,
+          message: (err == null ? void 0 : err.message) || "Erro ao buscar serviços.",
+          consecutiveErrors: this._consecutiveErrors
+        }
+      }));
     });
+  }
+  _scrollToResults() {
+    var _a2, _b, _c;
+    const anchor = ((_a2 = this.shadowRoot) == null ? void 0 : _a2.querySelector("[data-results-anchor]")) || ((_b = this.shadowRoot) == null ? void 0 : _b.querySelector(".search-results")) || ((_c = this.shadowRoot) == null ? void 0 : _c.querySelector(".service-list"));
+    if (anchor) anchor.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   async _fetchServices(term, signal) {
     const url = `${this.searchApiUrl}?pergunta=${encodeURIComponent(term)}`;
