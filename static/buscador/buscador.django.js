@@ -1594,6 +1594,15 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             .service-card {
                 padding: var(--space-2) var(--space-2);
             }
+
+            .btn-feedback--filled {
+                font-size: 0;
+                gap: 0;
+                padding: var(--space-1);
+                width: 36px;
+                height: 36px;
+                justify-content: center;
+            }
         }
     `]);
 // ─── Reactive properties ──────────────────────────────────────────────────
