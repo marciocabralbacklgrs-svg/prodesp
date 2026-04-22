@@ -2113,6 +2113,8 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$3`
             line-height: 19.32px;
             color: var(--color-n900);
             margin: 0;
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
 
         /* ── Card de resposta IA ── */
@@ -2156,6 +2158,8 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$3`
             line-height: 19.32px;
             color: var(--color-n800);
             margin: 0;
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
 
         /* ── Loading shimmer ── */
