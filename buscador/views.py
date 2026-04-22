@@ -5,7 +5,7 @@ Rotas tratadas:
   POST /api/buscadorAgentforce/  →  Salesforce /services/apexrest/buscadorAgentforce/
   GET  /api/services/search      →  Orquestrador API
 
-Prioridade das credenciais: headers da requisição (embutidos no JS) > settings/.env
+Credenciais lidas exclusivamente de variáveis de ambiente via settings/.env.
 
 Dependência: pip install requests
 """
@@ -21,7 +21,6 @@ from django.utils.decorators import method_decorator
 
 
 # ─── Cache de token Salesforce (em memória, por processo) ────────────────────
-# Chaveado por (instance_url, client_id) para suportar credenciais dinâmicas.
 
 _sf_token_lock  = threading.Lock()
 _sf_token_cache = {}   # {(instance_url, client_id): access_token}
@@ -68,10 +67,9 @@ class BuscadorAgentforceView(View):
     SF_APEX_PATH = "/services/apexrest/buscadorAgentforce/"
 
     def post(self, request):
-        # Credenciais: JS envia nos headers; fallback para settings/.env
-        sf_instance_url  = request.headers.get("sf-instance-url")  or settings.SF_INSTANCE_URL
-        sf_client_id     = request.headers.get("sf-client-id")     or settings.SF_CLIENT_ID
-        sf_client_secret = request.headers.get("sf-client-secret") or settings.SF_CLIENT_SECRET
+        sf_instance_url  = settings.SF_INSTANCE_URL
+        sf_client_id     = settings.SF_CLIENT_ID
+        sf_client_secret = settings.SF_CLIENT_SECRET
         sf_url = f"{sf_instance_url}{self.SF_APEX_PATH}"
 
         for attempt in range(2):
@@ -118,13 +116,9 @@ class BuscadorAgentforceView(View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class BuscadorSearchView(View):
-    """GET /api/services/search → Orquestrador
-
-    Prioridade: headers da requisição (embutidos no JS) > settings/.env
-    """
+    """GET /api/services/search → Orquestrador"""
 
     def get(self, request):
-        # Credenciais vêm das env vars (headers com underscore são removidos pelo nginx do Render)
         api_url       = settings.ORQUESTRADOR_API_URL
         client_id     = getattr(settings, "ORQUESTRADOR_CLIENT_ID",     "")
         client_secret = getattr(settings, "ORQUESTRADOR_CLIENT_SECRET", "")

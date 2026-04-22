@@ -2378,23 +2378,14 @@ __publicField(PtBuscadorAgentforce, "properties", {
   _followUpQuery: { state: true }
 });
 customElements.define("pt-buscador-agentforce", PtBuscadorAgentforce);
-var define_BUSCADOR_CONFIG_default = { orquestradorApiUrl: "https://api-buscador-inteligente-indexado-bsbx7o.kbrj7.bra-s1.cloudhub.io/api/buscador-inteligente/v1/pesquisas", orquestradorClientId: "0f99df8495b14756b2479eb5bf0b1a09", orquestradorClientSecret: "A71258EA11dC4f93bB4eD548Bd61512B", sfInstanceUrl: "https://innovation-business-8488--sfdev01.sandbox.my.salesforce.com", sfClientId: "3MVG9bjNVlqB8yGGW.qYKT0q9dmvNUhOpAsOwotiXQikmvkHQUKOxPdO28jH5J5A2JLREkTmQ4bvBMYnXPIxJ", sfClientSecret: "7D398EB590CF48B7D70ECE6722B046FAFE213D55076A6DB50B005E98BDB553CD" };
-const buscadorConfig = define_BUSCADOR_CONFIG_default;
-const _cfg = buscadorConfig;
 document.addEventListener("DOMContentLoaded", () => {
   const buscador = document.getElementById("buscador");
   const agentforce = document.getElementById("agentforce");
   const resultsSection = document.getElementById("results-section");
   const agentforceSection = document.getElementById("agentforce-section");
-  if (!buscador) return;
+  if (!buscador || !resultsSection || !agentforceSection) return;
   buscador.searchApiUrl = "/api/services/search";
-  buscador.orquestradorClientId = _cfg.orquestradorClientId;
-  buscador.orquestradorClientSecret = _cfg.orquestradorClientSecret;
-  if (agentforce) {
-    agentforce.sfInstanceUrl = _cfg.sfInstanceUrl;
-    agentforce.sfClientId = _cfg.sfClientId;
-    agentforce.sfClientSecret = _cfg.sfClientSecret;
-  }
+  if (agentforce) agentforce.apiBaseUrl = "/api";
   const ANIM_MS = 380;
   function getAgentforceTopOffset() {
     const mainEl = resultsSection.parentElement;
@@ -2453,6 +2444,5 @@ document.addEventListener("DOMContentLoaded", () => {
 export {
   PtBuscadorAgentforce,
   PtBuscadorCampo,
-  PtBuscadorIndicePesquisa,
-  buscadorConfig
+  PtBuscadorIndicePesquisa
 };
