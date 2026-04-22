@@ -1246,8 +1246,9 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
 
             font-family: 'Rawline', sans-serif;
             display: block;
+            box-sizing: border-box;
             width: 100%;
-            padding: 0 var(--space-3); /* alinha com search-section e pt-buscador-agentforce */
+            padding: 0 var(--space-3);
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -1575,6 +1576,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
 
         /* ── Responsividade ── */
         @media (max-width: 767px) {
+            :host { padding: 0 var(--space-2); }
             .buscador-wrapper { padding: var(--space-4) 0; gap: var(--space-3); }
 
             .service-title {
@@ -3619,7 +3621,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
 
         /* ── Responsividade ── */
         @media (max-width: 767px) {
-            :host { padding: var(--space-4) var(--space-2) 0; }
+            :host { padding: 0 var(--space-2) var(--space-2); }
 
             .chatbox-header {
                 padding: var(--space-2) var(--space-3); /* 16px 24px */
