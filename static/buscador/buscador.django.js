@@ -1575,7 +1575,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         /* ── Responsividade ── */
         @media (max-width: 767px) {
             :host { padding: 0 var(--space-2); }
-            .buscador-wrapper { padding: var(--space-4) 0; gap: var(--space-3); }
+            .buscador-wrapper { padding: var(--space-5) var(--space-2) var(--space-3); }
 
             .service-title {
                 font-size: 16.8px;      /* H4 Mobile */
