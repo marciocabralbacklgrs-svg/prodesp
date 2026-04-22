@@ -3672,29 +3672,34 @@ document.addEventListener("DOMContentLoaded", () => {
   buscador.searchApiUrl = "/api/services/search";
   if (agentforce) agentforce.apiBaseUrl = "/api";
   const ANIM_MS = 380;
-  function getAgentforceTopOffset() {
+  let _topPx = 0;
+  let _anchorOff = 0;
+  function measureOffsets() {
     const mainEl = resultsSection.parentElement;
     const mainRect = mainEl.getBoundingClientRect();
     const busRect = buscador.getBoundingClientRect();
-    const anchorOff = buscador.getAnchorOffsetTop ? buscador.getAnchorOffsetTop() : 0;
-    return Math.round(busRect.top - mainRect.top + anchorOff);
+    _anchorOff = buscador.getAnchorOffsetTop ? buscador.getAnchorOffsetTop() : 0;
+    _topPx = Math.round(busRect.top - mainRect.top + _anchorOff);
   }
   function showResults() {
+    const naturalTop = agentforceSection.offsetTop;
     agentforceSection.classList.remove("af-active", "af-reveal-down");
+    agentforceSection.style.top = `${naturalTop}px`;
     agentforceSection.classList.add("af-overlap", "af-wipe-up");
     resultsSection.classList.remove("rs-hidden", "rs-wipe-down");
     resultsSection.classList.add("rs-reveal-up");
     setTimeout(() => {
       agentforceSection.classList.remove("af-overlap", "af-wipe-up");
       agentforceSection.style.top = "";
+      agentforceSection.style.paddingTop = "";
       resultsSection.classList.remove("rs-reveal-up");
     }, ANIM_MS);
   }
   function showChat(term) {
-    const topPx = getAgentforceTopOffset();
+    measureOffsets();
     resultsSection.classList.remove("rs-reveal-up");
     resultsSection.classList.add("rs-wipe-down");
-    agentforceSection.style.top = `${topPx}px`;
+    agentforceSection.style.top = `${_topPx}px`;
     agentforceSection.classList.add("af-overlap", "af-reveal-down");
     if (agentforce) {
       agentforce.searchTerm = "";
@@ -3708,6 +3713,7 @@ document.addEventListener("DOMContentLoaded", () => {
       agentforceSection.classList.remove("af-overlap", "af-reveal-down");
       agentforceSection.classList.add("af-active");
       agentforceSection.style.top = "";
+      agentforceSection.style.paddingTop = `${_anchorOff}px`;
     }, ANIM_MS);
   }
   document.addEventListener("buscador-search", (e2) => {
