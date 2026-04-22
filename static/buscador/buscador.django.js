@@ -3216,7 +3216,6 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
 
             font-family: 'Rawline', system-ui, -apple-system, sans-serif;
             display: block;
-            padding: 0 var(--space-3) var(--space-2); /* 0 24px 16px — top controlado pelo componente pai */
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -3226,9 +3225,9 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             background: var(--color-n200);
             border-radius: var(--radius-card);
             box-shadow: var(--shadow-2);
-            width: 100%;
+            width: calc(100% - 2 * var(--space-3));
             max-width: 894px;
-            margin: 0 auto;
+            margin: 0 auto 16px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -3619,7 +3618,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
 
         /* ── Responsividade ── */
         @media (max-width: 767px) {
-            :host { padding: 0 var(--space-2) var(--space-2); }
+            .chatbox-panel { width: calc(100% - 2 * var(--space-2)); }
 
             .chatbox-header {
                 padding: var(--space-2) var(--space-3); /* 16px 24px */
