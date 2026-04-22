@@ -1246,8 +1246,6 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
 
             font-family: 'Rawline', sans-serif;
             display: block;
-            box-sizing: border-box;
-            width: 100%;
             padding: 0 var(--space-3);
         }
 
