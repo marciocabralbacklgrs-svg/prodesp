@@ -3690,16 +3690,21 @@ document.addEventListener("DOMContentLoaded", () => {
     _topPx = Math.round(busRect.top - mainRect.top + _anchorOff);
   }
   function showResults() {
-    const naturalTop = agentforceSection.offsetTop;
-    agentforceSection.classList.remove("af-active", "af-reveal-down");
-    agentforceSection.style.top = `${naturalTop}px`;
-    agentforceSection.classList.add("af-overlap", "af-wipe-up");
+    const isAgentforceVisible = agentforceSection.classList.contains("af-active") || agentforceSection.classList.contains("af-overlap");
+    if (isAgentforceVisible) {
+      const naturalTop = agentforceSection.offsetTop;
+      agentforceSection.classList.remove("af-active", "af-reveal-down");
+      agentforceSection.style.top = `${naturalTop}px`;
+      agentforceSection.classList.add("af-overlap", "af-wipe-up");
+    }
     resultsSection.classList.remove("rs-hidden", "rs-wipe-down");
     resultsSection.classList.add("rs-reveal-up");
     setTimeout(() => {
-      agentforceSection.classList.remove("af-overlap", "af-wipe-up");
-      agentforceSection.style.top = "";
-      agentforceSection.style.paddingTop = "";
+      if (isAgentforceVisible) {
+        agentforceSection.classList.remove("af-overlap", "af-wipe-up");
+        agentforceSection.style.top = "";
+        agentforceSection.style.paddingTop = "";
+      }
       resultsSection.classList.remove("rs-reveal-up");
     }, ANIM_MS);
   }
