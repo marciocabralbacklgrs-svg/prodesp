@@ -2974,6 +2974,7 @@ g.walkTokens;
 g.parseInline;
 b.parse;
 x.lex;
+const FETCH_TIMEOUT_MS = 45e3;
 const _mdRenderer = new g.Renderer();
 _mdRenderer.link = ({ href, title, text }) => `<a href="${href}" target="_blank" rel="noopener noreferrer"${title ? ` title="${title}"` : ""}>${text}</a>`;
 g.use({ renderer: _mdRenderer, breaks: true });
@@ -2996,6 +2997,7 @@ class PtBuscadorAgentforce extends i$1 {
     this._isLoading = false;
     this._hasError = false;
     this._errorMessage = "";
+    this._isTimeoutError = false;
     this._hasStartedConversation = false;
     this._followUpQuery = "";
   }
@@ -3017,7 +3019,7 @@ class PtBuscadorAgentforce extends i$1 {
   }
   // ─── Computed ─────────────────────────────────────────────────────────────
   get isFollowUpDisabled() {
-    return this._isLoading || !this._followUpQuery || this._followUpQuery.trim().length < 3;
+    return this._isLoading || !this._followUpQuery || this._followUpQuery.trim().length < 1;
   }
   // ─── Lifecycle ────────────────────────────────────────────────────────────
   updated() {
@@ -3059,6 +3061,7 @@ class PtBuscadorAgentforce extends i$1 {
   }
   handleClose() {
     if (this._sessionId) this._endAgentSession();
+    this._clearError();
     this._resetState();
     this.dispatchEvent(new CustomEvent("chatclose", { bubbles: true, composed: true }));
   }
@@ -3082,13 +3085,25 @@ class PtBuscadorAgentforce extends i$1 {
     if (this.sfInstanceUrl) headers["sf-instance-url"] = this.sfInstanceUrl;
     if (this.sfClientId) headers["sf-client-id"] = this.sfClientId;
     if (this.sfClientSecret) headers["sf-client-secret"] = this.sfClientSecret;
-    const res = await fetch(`${this.apiBaseUrl}/buscadorAgentforce/`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    try {
+      const res = await fetch(`${this.apiBaseUrl}/buscadorAgentforce/`, {
+        method: "POST",
+        headers,
+        signal: controller.signal,
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    } catch (err) {
+      if (err.name === "AbortError") {
+        throw new Error("A resposta demorou mais que o esperado. Tente enviar sua mensagem novamente.");
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
   async _initSession() {
     const res = await this._sfPost({ action: "startSession" });
@@ -3107,6 +3122,21 @@ class PtBuscadorAgentforce extends i$1 {
     }
   }
   async _send(text) {
+    try {
+      await this._trySend(text);
+    } catch (error) {
+      if (this._isSessionError(error)) {
+        this._sessionId = null;
+        this._sequenceId = 1;
+        await this._initSession();
+        this._addSystemMessage("Sessão renovada — o assistente não tem contexto das mensagens anteriores. Por favor, envie sua mensagem novamente.");
+        await this._trySend(text);
+      } else {
+        throw error;
+      }
+    }
+  }
+  async _trySend(text) {
     const res = await this._sfPost({
       action: "sendMessage",
       sessionId: this._sessionId,
@@ -3116,6 +3146,34 @@ class PtBuscadorAgentforce extends i$1 {
     if (!res.success) throw new Error(res.errorMessage || "Falha ao enviar mensagem");
     this._sequenceId++;
     if (res.agentResponse) this._addMessage(res.agentResponse, "agent");
+  }
+  _isSessionError(error) {
+    var _a2;
+    const msg = (((_a2 = error.body) == null ? void 0 : _a2.message) || error.message || "").toLowerCase();
+    return msg.includes("sess") || msg.includes("obrigat") || msg.includes("invalid") || msg.includes("expir");
+  }
+  _addSystemMessage(text) {
+    this._msgCounter++;
+    this._messages = [...this._messages, {
+      id: `msg-${this._msgCounter}`,
+      text,
+      type: "system",
+      timestamp: "",
+      isUser: false,
+      isAgent: false,
+      isSystem: true,
+      wrapperClass: "msg-wrapper msg-wrapper--system",
+      actionCopied: false,
+      actionLiked: false,
+      actionDisliked: false,
+      actionShared: false,
+      showCopiedToast: false,
+      copyBtnClass: "action-btn",
+      likeBtnClass: "action-btn",
+      dislikeBtnClass: "action-btn",
+      shareBtnClass: "action-btn"
+    }];
+    this._scrollDown();
   }
   _handleMsgAction(msgId, action) {
     const cls = (active) => `action-btn${active ? " action-btn--active" : ""}`;
@@ -3190,11 +3248,14 @@ class PtBuscadorAgentforce extends i$1 {
   _clearError() {
     this._hasError = false;
     this._errorMessage = "";
+    this._isTimeoutError = false;
   }
   _showError(error) {
     var _a2;
+    const raw = ((_a2 = error.body) == null ? void 0 : _a2.message) || error.message || "Ocorreu um erro inesperado.";
     this._hasError = true;
-    this._errorMessage = ((_a2 = error.body) == null ? void 0 : _a2.message) || error.message || "Ocorreu um erro inesperado.";
+    this._isTimeoutError = raw.includes("demorou mais que o esperado");
+    this._errorMessage = this._isSessionError(error) ? "Não foi possível retomar a conversa. Por favor, feche e tente novamente." : raw;
   }
   _scrollDown() {
     this._pendingTimers.push(setTimeout(() => {
@@ -3234,7 +3295,9 @@ class PtBuscadorAgentforce extends i$1 {
                     <div class="chatbox-messages" data-id="chatbox-messages" role="log" aria-live="polite">
                         ${this._messages.map((msg) => b$1`
                             <div class=${msg.wrapperClass}>
-                                ${msg.isUser ? b$1`
+                                ${msg.isSystem ? b$1`
+                                    <div class="msg-system">${msg.text}</div>
+                                ` : msg.isUser ? b$1`
                                     <div class="msg-bubble">
                                         <p class="msg-bubble-text">${msg.text}</p>
                                     </div>
@@ -3317,7 +3380,6 @@ class PtBuscadorAgentforce extends i$1 {
                 ${this._hasError ? b$1`
                     <div class="error-container">
                         <span class="error-message">${this._errorMessage}</span>
-                        <button class="retry-button" type="button" @click=${this._clearError}>Tentar Novamente</button>
                     </div>
                 ` : ""}
 
@@ -3678,6 +3740,28 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         .chatbox-send-btn:hover:not(:disabled) { opacity: 0.85; }
         .chatbox-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+        /* ── Mensagem de sistema ── */
+        .msg-wrapper--system { justify-content: center; }
+
+        .msg-system {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            font-size: 12px;
+            color: var(--color-n600);
+            font-style: italic;
+            text-align: center;
+        }
+
+        .msg-system::before,
+        .msg-system::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--color-n300);
+        }
+
         /* ── Erro ── */
         .error-container {
             display: flex;
@@ -3806,6 +3890,7 @@ __publicField(PtBuscadorAgentforce, "properties", {
   _isLoading: { state: true },
   _hasError: { state: true },
   _errorMessage: { state: true },
+  _isTimeoutError: { state: true },
   _hasStartedConversation: { state: true },
   _followUpQuery: { state: true }
 });
