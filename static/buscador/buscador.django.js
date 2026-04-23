@@ -864,6 +864,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
     __publicField(this, "_cache", /* @__PURE__ */ new Map());
     __publicField(this, "_inFlightTerm", "");
     __publicField(this, "_consecutiveErrors", 0);
+    __publicField(this, "_touchStartY", 0);
     this.searchApiUrl = "/api/services/search";
     this.orquestradorApiUrl = "";
     this.orquestradorClientId = "";
@@ -873,6 +874,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
     this._hasError = false;
     this._currentPage = 1;
     this._results = [];
+    this._isMobileSheetExpanded = false;
   }
   set searchTerm(value) {
     var _a2;
@@ -942,8 +944,14 @@ class PtBuscadorIndicePesquisa extends i$1 {
   get _showPagination() {
     return this._totalPages > 1;
   }
+  get _showFeedback() {
+    return this._hasSearched && !this._isLoading;
+  }
   get _skeletonItems() {
     return [0, 1, 2, 3, 4];
+  }
+  get _feedbackSheetClass() {
+    return this._isMobileSheetExpanded ? "feedback-sheet feedback-sheet--expanded" : "feedback-sheet";
   }
   get _displayedResults() {
     const start = (this._currentPage - 1) * PAGE_SIZE;
@@ -972,6 +980,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
   }
   // ─── Event handlers ───────────────────────────────────────────────────────
   handleSimEncontrei() {
+    this._isMobileSheetExpanded = false;
     this.dispatchEvent(new CustomEvent("found", {
       bubbles: true,
       composed: true,
@@ -979,11 +988,25 @@ class PtBuscadorIndicePesquisa extends i$1 {
     }));
   }
   handleNaoEncontrei() {
+    this._isMobileSheetExpanded = false;
     this.dispatchEvent(new CustomEvent("notfound", {
       bubbles: true,
       composed: true,
       detail: { searchTerm: this._searchTermValue }
     }));
+  }
+  handleTouchStart(event) {
+    this._touchStartY = event.touches[0].clientY;
+  }
+  handleTouchEnd(event) {
+    const dy = this._touchStartY - event.changedTouches[0].clientY;
+    if (Math.abs(dy) < 8) {
+      this._isMobileSheetExpanded = !this._isMobileSheetExpanded;
+    } else if (dy > 30) {
+      this._isMobileSheetExpanded = true;
+    } else if (dy < -30) {
+      this._isMobileSheetExpanded = false;
+    }
   }
   goToPage(event) {
     const page = parseInt(event.currentTarget.dataset.page, 10);
@@ -1081,6 +1104,26 @@ class PtBuscadorIndicePesquisa extends i$1 {
       return { id, title, description, tags: tipoServico ? [tipoServico] : [], link };
     });
   }
+  // ─── SVG helpers ──────────────────────────────────────────────────────────
+  get _thumbsUpSvg() {
+    return b$1`
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3z"/>
+                <path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/>
+            </svg>`;
+  }
+  get _starSvgDesktop() {
+    return b$1`
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M8 1L10.5 5.5 15 8 10.5 10.5 8 15 5.5 10.5 1 8 5.5 5.5Z"/>
+            </svg>`;
+  }
+  get _starSvgMobile() {
+    return b$1`
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M8 1L10.5 5.5 15 8 10.5 10.5 8 15 5.5 10.5 1 8 5.5 5.5Z"/>
+            </svg>`;
+  }
   // ─── Template ─────────────────────────────────────────────────────────────
   render() {
     return b$1`
@@ -1111,13 +1154,15 @@ class PtBuscadorIndicePesquisa extends i$1 {
                 ` : this._hasNoResults ? b$1`
                     <div class="search-results" data-results-anchor data-id="results-empty">
                         <div class="feedback-banner" data-id="feedback-banner" role="region" aria-label="Feedback de pesquisa">
-                            <span class="feedback-question">Encontrou o que precisava?</span>
+                            <span class="feedback-question">Encontrou o que procurava?</span>
                             <div class="feedback-actions">
+                                <!--<button class="btn-feedback btn-feedback--outlined" type="button" @click=${this.handleSimEncontrei}>
+                                    ${this._thumbsUpSvg}
+                                    Sim, encontrei
+                                </button>-->
                                 <button class="btn-feedback btn-feedback--filled" data-id="btn-nao-encontrei" type="button" @click=${this.handleNaoEncontrei}>
                                     Não encontrei
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                                    </svg>
+                                    ${this._starSvgDesktop}
                                 </button>
                             </div>
                         </div>
@@ -1132,20 +1177,15 @@ class PtBuscadorIndicePesquisa extends i$1 {
                     <div class="search-results" data-results-anchor data-id="results-container">
 
                         <div class="feedback-banner" data-id="feedback-banner" role="region" aria-label="Feedback de pesquisa">
-                            <span class="feedback-question">Encontrou o que precisava?</span>
+                            <span class="feedback-question">Encontrou o que procurava?</span>
                             <div class="feedback-actions">
-                                <!--<button class="btn-feedback btn-feedback--outlined" type="button">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3z"/>
-                                        <path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/>
-                                    </svg>
+                                <!--<button class="btn-feedback btn-feedback--outlined" type="button" @click=${this.handleSimEncontrei}>
+                                    ${this._thumbsUpSvg}
                                     Sim, encontrei
                                 </button>-->
                                 <button class="btn-feedback btn-feedback--filled" data-id="btn-nao-encontrei" type="button" @click=${this.handleNaoEncontrei}>
                                     Não encontrei
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                                    </svg>
+                                    ${this._starSvgDesktop}
                                 </button>
                             </div>
                         </div>
@@ -1201,6 +1241,34 @@ class PtBuscadorIndicePesquisa extends i$1 {
                             </nav>
                         ` : ""}
 
+                    </div>
+                ` : ""}
+
+                ${this._showFeedback ? b$1`
+                    <div class=${this._feedbackSheetClass}
+                         role="region"
+                         aria-label="Feedback de pesquisa"
+                         data-id="feedback-sheet">
+                        <div class="feedback-sheet-handle"
+                             @touchstart=${this.handleTouchStart}
+                             @touchend=${this.handleTouchEnd}>
+                            <div class="feedback-sheet-handle-bar"></div>
+                        </div>
+                        <div class="feedback-sheet-body">
+                            <span class="feedback-question">Encontrou o que procurava?</span>
+                            <div class="feedback-sheet-btns">
+                                <div class="feedback-actions">
+                                    <!--<button class="btn-feedback btn-feedback--outlined" type="button" @click=${this.handleSimEncontrei}>
+                                        ${this._thumbsUpSvg}
+                                        Sim, encontrei
+                                    </button>-->
+                                    <button class="btn-feedback btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
+                                        Não, pesquisar com IA
+                                        ${this._starSvgMobile}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 ` : ""}
 
@@ -1346,7 +1414,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             width: 100%;
         }
 
-        /* ── Banner de feedback ── */
+        /* ── Banner de feedback — desktop/tablet ── */
         .feedback-banner {
             display: flex;
             justify-content: space-between;
@@ -1378,10 +1446,9 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: var(--space-1) var(--space-3); /* 8px 24px */
-            font-size: 14px;             /* Label */
-            font-weight: 600;            /* SemiBold */
-            line-height: 20.3px;
+            padding: var(--space-1) 20px;
+            font-size: 15px;
+            font-weight: 700;
             font-family: inherit;
             border-radius: var(--radius-pill);
             cursor: pointer;
@@ -1400,6 +1467,37 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             background: var(--color-primary);
             border: 1.5px solid var(--color-primary);
             color: var(--color-secondary);
+        }
+
+        /* ── Bottom sheet móvel — oculto no desktop/tablet ── */
+        .feedback-sheet {
+            display: none;
+        }
+
+        .feedback-sheet-handle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 0 8px;
+            width: 100%;
+            cursor: grab;
+            touch-action: none;
+        }
+
+        .feedback-sheet-handle-bar {
+            width: 32px;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--color-n400);
+        }
+
+        .feedback-sheet-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            padding: 4px var(--space-3) 0;
+            text-align: center;
         }
 
         /* ── Contagem ── */
@@ -1577,13 +1675,62 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             :host { padding: 0 var(--space-2); }
             .buscador-wrapper { padding: var(--space-5) var(--space-2) var(--space-3); }
 
+            /* Banner inline oculto no mobile */
+            .feedback-banner { display: none; }
+
+            /* Bottom sheet: sticky na base da área do componente */
+            .feedback-sheet {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                position: sticky;
+                bottom: 0;
+                z-index: 10;
+                background: var(--color-n200);
+                border-radius: 16px 16px 0 0;
+                box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
+            }
+
+            /* Botões colapsados por padrão */
+            .feedback-sheet-btns {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 300ms ease-out;
+                width: 100%;
+            }
+
+            /* Expandido: botões revelados */
+            .feedback-sheet--expanded .feedback-sheet-btns {
+                max-height: 200px;
+            }
+
+            .feedback-question {
+                font-size: 18px;
+                font-weight: 500;
+                line-height: 26px;
+            }
+
+            /* Padding dentro do container colapsável: invisível quando recolhido */
+            .feedback-actions {
+                flex-direction: column;
+                width: 100%;
+                gap: 12px;
+                padding: 16px 0 40px;
+            }
+
+            .btn-feedback {
+                width: 100%;
+                justify-content: center;
+                padding: 14px var(--space-3);
+                font-size: 15px;
+            }
+
             .service-title {
                 font-size: 16.8px;      /* H4 Mobile */
                 line-height: 19.32px;
             }
 
             .service-desc,
-            .feedback-question,
             .results-count,
             .no-results-message,
             .error-message {
@@ -1593,15 +1740,6 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
 
             .service-card {
                 padding: var(--space-2) var(--space-2);
-            }
-
-            .btn-feedback--filled {
-                font-size: 0;
-                gap: 0;
-                padding: var(--space-1);
-                width: 36px;
-                height: 36px;
-                justify-content: center;
             }
         }
     `]);
@@ -1615,7 +1753,8 @@ __publicField(PtBuscadorIndicePesquisa, "properties", {
   _isLoading: { state: true },
   _hasError: { state: true },
   _currentPage: { state: true },
-  _results: { state: true }
+  _results: { state: true },
+  _isMobileSheetExpanded: { state: true }
 });
 customElements.define("pt-buscador-indice-pesquisa", PtBuscadorIndicePesquisa);
 /**
