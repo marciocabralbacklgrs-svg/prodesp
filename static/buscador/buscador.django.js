@@ -875,6 +875,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
     this._currentPage = 1;
     this._results = [];
     this._isMobileSheetExpanded = false;
+    this._simEncontreiFeedback = false;
   }
   set searchTerm(value) {
     var _a2;
@@ -981,6 +982,10 @@ class PtBuscadorIndicePesquisa extends i$1 {
   // ─── Event handlers ───────────────────────────────────────────────────────
   handleSimEncontrei() {
     this._isMobileSheetExpanded = false;
+    this._simEncontreiFeedback = true;
+    setTimeout(() => {
+      this._simEncontreiFeedback = false;
+    }, 1e3);
     this.dispatchEvent(new CustomEvent("found", {
       bubbles: true,
       composed: true,
@@ -1156,7 +1161,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
                         <div class="feedback-banner" data-id="feedback-banner" role="region" aria-label="Feedback de pesquisa">
                             <span class="feedback-question">Encontrou o que procurava?</span>
                             <div class="feedback-actions">
-                                <button class="btn-feedback btn-feedback--outlined" type="button" @click=${this.handleSimEncontrei}>
+                                <button class=${this._simEncontreiFeedback ? "btn-feedback btn-feedback--filled" : "btn-feedback btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
                                     ${this._thumbsUpSvg}
                                     Sim, encontrei
                                 </button>
@@ -1179,7 +1184,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
                         <div class="feedback-banner" data-id="feedback-banner" role="region" aria-label="Feedback de pesquisa">
                             <span class="feedback-question">Encontrou o que procurava?</span>
                             <div class="feedback-actions">
-                                <button class="btn-feedback btn-feedback--outlined" type="button" @click=${this.handleSimEncontrei}>
+                                <button class=${this._simEncontreiFeedback ? "btn-feedback btn-feedback--filled" : "btn-feedback btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
                                     ${this._thumbsUpSvg}
                                     Sim, encontrei
                                 </button>
@@ -1258,7 +1263,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
                             <span class="feedback-question">Encontrou o que procurava?</span>
                             <div class="feedback-sheet-btns">
                                 <div class="feedback-actions">
-                                    <button class="btn-feedback btn-feedback--outlined" type="button" @click=${this.handleSimEncontrei}>
+                                    <button class=${this._simEncontreiFeedback ? "btn-feedback btn-feedback--filled" : "btn-feedback btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
                                         ${this._thumbsUpSvg}
                                         Sim, encontrei
                                     </button>
@@ -1754,7 +1759,8 @@ __publicField(PtBuscadorIndicePesquisa, "properties", {
   _hasError: { state: true },
   _currentPage: { state: true },
   _results: { state: true },
-  _isMobileSheetExpanded: { state: true }
+  _isMobileSheetExpanded: { state: true },
+  _simEncontreiFeedback: { state: true }
 });
 customElements.define("pt-buscador-indice-pesquisa", PtBuscadorIndicePesquisa);
 /**
