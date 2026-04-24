@@ -895,6 +895,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
       this._hasSearched = false;
       this._hasError = false;
       this._currentPage = 1;
+      this._simEncontreiFeedback = false;
       return;
     }
     if (incoming === this._inFlightTerm) return;
@@ -983,9 +984,6 @@ class PtBuscadorIndicePesquisa extends i$1 {
   handleSimEncontrei() {
     this._isMobileSheetExpanded = false;
     this._simEncontreiFeedback = true;
-    setTimeout(() => {
-      this._simEncontreiFeedback = false;
-    }, 1e3);
     this.dispatchEvent(new CustomEvent("found", {
       bubbles: true,
       composed: true,
@@ -1038,6 +1036,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
     const term = this._searchTermValue.trim();
     if (!term || term.length < MIN_SEARCH_LENGTH) return;
     if (term === this._inFlightTerm) return;
+    this._simEncontreiFeedback = false;
     if (this._cache.has(term)) {
       this._results = this._cache.get(term);
       this._currentPage = 1;
@@ -1161,7 +1160,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
                         <div class="feedback-banner" data-id="feedback-banner" role="region" aria-label="Feedback de pesquisa">
                             <span class="feedback-question">Encontrou o que procurava?</span>
                             <div class="feedback-actions">
-                                <button class=${this._simEncontreiFeedback ? "btn-feedback btn-feedback--filled" : "btn-feedback btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
+                                <button class=${this._simEncontreiFeedback ? "btn-feedback btn-feedback--confirmed" : "btn-feedback btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
                                     ${this._thumbsUpSvg}
                                     Sim, encontrei
                                 </button>
@@ -1184,7 +1183,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
                         <div class="feedback-banner" data-id="feedback-banner" role="region" aria-label="Feedback de pesquisa">
                             <span class="feedback-question">Encontrou o que procurava?</span>
                             <div class="feedback-actions">
-                                <button class=${this._simEncontreiFeedback ? "btn-feedback btn-feedback--filled" : "btn-feedback btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
+                                <button class=${this._simEncontreiFeedback ? "btn-feedback btn-feedback--confirmed" : "btn-feedback btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
                                     ${this._thumbsUpSvg}
                                     Sim, encontrei
                                 </button>
@@ -1263,7 +1262,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
                             <span class="feedback-question">Encontrou o que procurava?</span>
                             <div class="feedback-sheet-btns">
                                 <div class="feedback-actions">
-                                    <button class=${this._simEncontreiFeedback ? "btn-feedback btn-feedback--filled" : "btn-feedback btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
+                                    <button class=${this._simEncontreiFeedback ? "btn-feedback btn-feedback--confirmed" : "btn-feedback btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
                                         ${this._thumbsUpSvg}
                                         Sim, encontrei
                                     </button>
@@ -1472,6 +1471,12 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             background: var(--color-primary);
             border: 1.5px solid var(--color-primary);
             color: var(--color-secondary);
+        }
+
+        .btn-feedback--confirmed {
+            background: #E6F4EA;
+            border: 1.5px solid #2E7D32;
+            color: #2E7D32;
         }
 
         /* ── Bottom sheet móvel — oculto no desktop/tablet ── */
