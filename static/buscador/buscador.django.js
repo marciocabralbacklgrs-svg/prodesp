@@ -876,6 +876,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
     this._results = [];
     this._isMobileSheetExpanded = false;
     this._simEncontreiFeedback = false;
+    this._origem = "";
   }
   set searchTerm(value) {
     var _a2;
@@ -896,6 +897,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
       this._hasError = false;
       this._currentPage = 1;
       this._simEncontreiFeedback = false;
+      this._origem = "";
       return;
     }
     if (incoming === this._inFlightTerm) return;
@@ -1037,6 +1039,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
     if (!term || term.length < MIN_SEARCH_LENGTH) return;
     if (term === this._inFlightTerm) return;
     this._simEncontreiFeedback = false;
+    this._origem = "";
     if (this._cache.has(term)) {
       this._results = this._cache.get(term);
       this._currentPage = 1;
@@ -1051,8 +1054,9 @@ class PtBuscadorIndicePesquisa extends i$1 {
     this._hasError = false;
     this._hasSearched = false;
     this._currentPage = 1;
-    this._fetchServices(term, this._abortController.signal).then((results) => {
+    this._fetchServices(term, this._abortController.signal).then(({ results, origem }) => {
       this._results = results;
+      this._origem = origem;
       this._isLoading = false;
       this._hasSearched = true;
       this._inFlightTerm = "";
@@ -1097,8 +1101,9 @@ class PtBuscadorIndicePesquisa extends i$1 {
     if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
     const raw = await res.json();
     const data = typeof raw === "string" ? JSON.parse(raw) : raw;
-    if (!data.resultados) return data.results ?? [];
-    return data.resultados.map((item, index) => {
+    const origem = data.origem || "";
+    const rawList = data.resultados ?? data.results ?? [];
+    const results = rawList.map((item, index) => {
       var _a2, _b2, _c;
       const id = (item == null ? void 0 : item.id) ?? `${term}-${index}`;
       const title = (item == null ? void 0 : item.name) || "";
@@ -1107,6 +1112,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
       const link = "https://poupatempo.sp.gov.br/carta/" + ((_c = item == null ? void 0 : item.detalhes) == null ? void 0 : _c.idServico) || "#";
       return { id, title, description, tags: tipoServico ? [tipoServico] : [], link };
     });
+    return { results, origem };
   }
   // ─── SVG helpers ──────────────────────────────────────────────────────────
   get _thumbsUpSvg() {
@@ -1173,6 +1179,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
                         <div class="results-count" data-id="results-count" aria-live="polite">
                             <strong class="results-number">0 resultados</strong>
                             <span class="results-suffix"> encontrados</span>
+                            ${this._origem ? b$1`<span class="origem-badge">${this._origem}</span>` : ""}
                         </div>
                         <p class="no-results-message" data-id="no-results-message">Nenhum resultado encontrado para a sua busca. Tente outros termos ou explore os serviços disponíveis.</p>
                     </div>
@@ -1197,6 +1204,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
                         <div class="results-count" data-id="results-count" aria-live="polite">
                             <strong class="results-number">${this._totalResults} resultados</strong>
                             <span class="results-suffix"> encontrados</span>
+                            ${this._origem ? b$1`<span class="origem-badge">${this._origem}</span>` : ""}
                         </div>
 
                         <div class="service-list" data-id="service-list" role="list">
@@ -1477,6 +1485,22 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             background: #E6F4EA;
             border: 1.5px solid #2E7D32;
             color: #2E7D32;
+        }
+
+        .origem-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--color-secondary);
+            background: var(--color-primary);
+            border-radius: 4px;
+            padding: 2px 8px;
+            margin-left: 8px;
+            vertical-align: middle;
         }
 
         /* ── Bottom sheet móvel — oculto no desktop/tablet ── */
@@ -1765,7 +1789,8 @@ __publicField(PtBuscadorIndicePesquisa, "properties", {
   _currentPage: { state: true },
   _results: { state: true },
   _isMobileSheetExpanded: { state: true },
-  _simEncontreiFeedback: { state: true }
+  _simEncontreiFeedback: { state: true },
+  _origem: { state: true }
 });
 customElements.define("pt-buscador-indice-pesquisa", PtBuscadorIndicePesquisa);
 /**
