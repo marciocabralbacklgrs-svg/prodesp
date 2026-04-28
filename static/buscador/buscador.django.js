@@ -1104,13 +1104,14 @@ class PtBuscadorIndicePesquisa extends i$1 {
     const origem = data.origem || "";
     const rawList = data.resultados ?? data.results ?? [];
     const results = rawList.map((item, index) => {
-      var _a2, _b2, _c;
+      var _a2, _b2, _c, _d;
       const id = (item == null ? void 0 : item.id) ?? `${term}-${index}`;
       const title = (item == null ? void 0 : item.name) || "";
       const description = ((_a2 = item == null ? void 0 : item.detalhes) == null ? void 0 : _a2.servico) || "";
       const tipoServico = (_b2 = item == null ? void 0 : item.detalhes) == null ? void 0 : _b2.tipoServico;
       const link = "https://poupatempo.sp.gov.br/carta/" + ((_c = item == null ? void 0 : item.detalhes) == null ? void 0 : _c.idServico) || "#";
-      return { id, title, description, tags: tipoServico ? [tipoServico] : [], link };
+      const orgao = (item == null ? void 0 : item.orgao) || ((_d = item == null ? void 0 : item.detalhes) == null ? void 0 : _d.orgao) || "";
+      return { id, title, orgao, description, tags: tipoServico ? [tipoServico] : [], link };
     });
     return { results, origem };
   }
@@ -1146,11 +1147,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
                             <span class="loading-dots" aria-hidden="true"></span>
                         </div>
                         ${this._skeletonItems.map((i3) => b$1`
-                            <div key=${i3} class="skeleton-card" aria-hidden="true">
-                                <div class="skeleton-bar skeleton-bar--title"></div>
-                                <div class="skeleton-bar skeleton-bar--desc"></div>
-                                <div class="skeleton-bar skeleton-bar--tags"></div>
-                            </div>
+                            <div key=${i3} class="skeleton-card" aria-hidden="true"></div>
                         `)}
                     </div>
 
@@ -1212,8 +1209,9 @@ class PtBuscadorIndicePesquisa extends i$1 {
                                 <a class="service-card" data-id="service-card" role="listitem" href=${s2.link} target="_blank" rel="noopener noreferrer">
                                     <div class="service-card-content">
                                         <h3 class="service-title" data-id="service-title">${s2.title}</h3>
-                                        <p class="service-desc">${s2.description}</p>
+                                        <p class="service-desc">Órgão Responsável: <strong>${s2.orgao}</strong></p>
                                         <div class="service-tags">
+                                            Serviço
                                             ${s2.tags.map((tag) => b$1`<span class="service-tag">${tag}</span>`)}
                                         </div>
                                     </div>
@@ -1332,7 +1330,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         *, *::before, *::after { box-sizing: border-box; }
 
         .buscador-wrapper {
-            max-width: 894px;
+            max-width: 100%;
             margin: 0 auto;
             padding: var(--space-5) 0;  /* 40px top — 5×8px */
             display: flex;
@@ -1395,28 +1393,18 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         .skeleton-card {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-1);        /* 8px */
-            padding: var(--space-3) var(--space-2); /* 24px 16px */
-            border-bottom: 1px solid var(--color-n300);
-        }
-
-        .skeleton-bar {
+            height: 80px;
             border-radius: var(--radius-card);
             background: linear-gradient(
                 90deg,
-                var(--color-n600) 0%,
-                var(--color-n300) 40%,
-                var(--color-n600) 80%
+                var(--color-n400) 0%,
+                var(--color-n200) 40%,
+                var(--color-n400) 80%
             );
             background-size: 400px 100%;
             animation: shimmer 1.8s linear infinite;
+            border-bottom: 1px solid var(--color-n300);
         }
-
-        .skeleton-bar--title { height: 22px; width: 70%; }
-        .skeleton-bar--desc  { height: 18px; width: 90%; }
-        .skeleton-bar--tags  { height: 22px; width: 30%; }
 
         /* ── Resultados ── */
         .search-results {
@@ -1602,24 +1590,25 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             color: var(--color-primary);
             margin: 0;
             font-family: inherit;
-            text-decoration: underline;
+            text-decoration: none;
         }
 
-        .service-card:hover .service-title { color: var(--color-info); } /* azul informação no hover */
-
         .service-desc {
-            font-size: 16.8px;          /* Body Desktop */
+            font-size: 14px;
             font-weight: 400;
-            line-height: 19.32px;
+            line-height: 20px;
             color: var(--color-n900);
             margin: 0;
         }
 
         .service-tags {
             display: flex;
+            align-items: center;
             gap: var(--space-1);        /* 8px */
             flex-wrap: wrap;
             margin-top: 4px;
+            font-size: 14px;
+            color: var(--color-primary);
         }
 
         .service-tag {
@@ -3011,6 +3000,8 @@ g.parseInline;
 b.parse;
 x.lex;
 const FETCH_TIMEOUT_MS = 45e3;
+const FEEDBACK_MAP = { like: "GOOD", dislike: "BAD" };
+const SHARE_SUBJECT = "Resposta do Assistente Poupatempo";
 const _mdRenderer = new g.Renderer();
 _mdRenderer.link = ({ href, title, text }) => `<a href="${href}" target="_blank" rel="noopener noreferrer"${title ? ` title="${title}"` : ""}>${text}</a>`;
 g.use({ renderer: _mdRenderer, breaks: true });
@@ -3036,6 +3027,7 @@ class PtBuscadorAgentforce extends i$1 {
     this._isTimeoutError = false;
     this._hasStartedConversation = false;
     this._followUpQuery = "";
+    this._relatedQuestions = [];
   }
   set searchTerm(value) {
     const old = this._searchTermValue;
@@ -3056,6 +3048,9 @@ class PtBuscadorAgentforce extends i$1 {
   // ─── Computed ─────────────────────────────────────────────────────────────
   get isFollowUpDisabled() {
     return this._isLoading || !this._followUpQuery || this._followUpQuery.trim().length < 1;
+  }
+  get _hasRelatedQuestions() {
+    return this._relatedQuestions.length > 0;
   }
   // ─── Lifecycle ────────────────────────────────────────────────────────────
   updated() {
@@ -3181,7 +3176,7 @@ class PtBuscadorAgentforce extends i$1 {
     });
     if (!res.success) throw new Error(res.errorMessage || "Falha ao enviar mensagem");
     this._sequenceId++;
-    if (res.agentResponse) this._addMessage(res.agentResponse, "agent");
+    if (res.agentResponse) this._addMessage(res.agentResponse, "agent", res.feedbackId || null);
   }
   _isSessionError(error) {
     var _a2;
@@ -3232,14 +3227,17 @@ class PtBuscadorAgentforce extends i$1 {
         m2.actionDisliked = false;
         m2.likeBtnClass = cls(m2.actionLiked);
         m2.dislikeBtnClass = cls(false);
+        if (m2.actionLiked) this._sendFeedback(msg.feedbackId, "like");
       } else if (action === "dislike") {
         m2.actionDisliked = !msg.actionDisliked;
         m2.actionLiked = false;
         m2.dislikeBtnClass = cls(m2.actionDisliked);
         m2.likeBtnClass = cls(false);
+        if (m2.actionDisliked) this._sendFeedback(msg.feedbackId, "dislike");
       } else if (action === "share") {
         m2.actionShared = true;
         m2.shareBtnClass = cls(true);
+        this._shareMessage(msg.text);
         this._pendingTimers.push(setTimeout(() => {
           this._messages = this._messages.map(
             (m22) => m22.id !== msgId ? m22 : { ...m22, actionShared: false, shareBtnClass: cls(false) }
@@ -3249,16 +3247,25 @@ class PtBuscadorAgentforce extends i$1 {
       return m2;
     });
   }
-  _addMessage(text, type) {
+  _addMessage(text, type, feedbackId = null) {
     const timestamp = (/* @__PURE__ */ new Date()).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    const isAgent = type === "agent";
     this._msgCounter++;
+    if (isAgent) {
+      this._messages = this._messages.map(
+        (m2) => m2.isAgent ? { ...m2, isLastAgent: false } : m2
+      );
+      this._updateRelatedQuestions(text);
+    }
     this._messages = [...this._messages, {
       id: `msg-${this._msgCounter}`,
       text,
       type,
       timestamp,
       isUser: type === "user",
-      isAgent: type === "agent",
+      isAgent,
+      isLastAgent: isAgent,
+      feedbackId: isAgent ? feedbackId : null,
       wrapperClass: type === "user" ? "msg-wrapper msg-wrapper--user" : "msg-wrapper msg-wrapper--ai",
       actionCopied: false,
       actionLiked: false,
@@ -3274,6 +3281,7 @@ class PtBuscadorAgentforce extends i$1 {
   }
   _resetState() {
     this._messages = [];
+    this._relatedQuestions = [];
     this._searchQuery = "";
     this._followUpQuery = "";
     this._sessionId = null;
@@ -3292,6 +3300,75 @@ class PtBuscadorAgentforce extends i$1 {
     this._hasError = true;
     this._isTimeoutError = raw.includes("demorou mais que o esperado");
     this._errorMessage = this._isSessionError(error) ? "Não foi possível retomar a conversa. Por favor, feche e tente novamente." : raw;
+  }
+  _sendFeedback(feedbackId, action) {
+    if (!feedbackId || !this._sessionId) return;
+    const feedback = FEEDBACK_MAP[action];
+    if (!feedback) return;
+    this._sfPost({ action: "sendFeedback", sessionId: this._sessionId, feedbackId, feedback, text: null }).catch(() => {
+    });
+  }
+  handleRelatedQuestion(event) {
+    const label = event.currentTarget.dataset.label;
+    if (!label || this._isLoading) return;
+    this._followUpQuery = label;
+    this.handleFollowUp();
+  }
+  _updateRelatedQuestions(text) {
+    const lines = (text || "").split("\n");
+    const idx = lines.findIndex((l4) => /perguntas?\s+relacionadas?/i.test(l4));
+    if (idx === -1) {
+      this._relatedQuestions = [];
+      return;
+    }
+    const qs = [];
+    for (let i3 = idx + 1; i3 < lines.length && qs.length < 5; i3++) {
+      const clean = lines[i3].replace(/^[\s\-*\d.]+/, "").trim();
+      if (clean.length > 4) qs.push({ id: `rq-${i3}`, label: clean });
+    }
+    this._relatedQuestions = qs;
+  }
+  async _shareMessage(text) {
+    const strategies = [
+      () => this._shareNative(text),
+      () => this._shareWhatsApp(text),
+      () => this._shareTelegram(text),
+      () => this._shareEmail(text),
+      () => this._shareClipboard(text)
+    ];
+    for (const strategy of strategies) {
+      try {
+        const ok = await strategy();
+        if (ok) return;
+      } catch (e2) {
+      }
+    }
+  }
+  async _shareNative(text) {
+    if (!navigator.share) return false;
+    try {
+      await navigator.share({ title: SHARE_SUBJECT, text });
+      return true;
+    } catch (e2) {
+      return e2.name === "AbortError";
+    }
+  }
+  _shareWhatsApp(text) {
+    const w2 = window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+    return w2 !== null;
+  }
+  _shareTelegram(text) {
+    const w2 = window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+    return w2 !== null;
+  }
+  _shareEmail(text) {
+    window.location.href = `mailto:?subject=${encodeURIComponent(SHARE_SUBJECT)}&body=${encodeURIComponent(text)}`;
+    return true;
+  }
+  async _shareClipboard(text) {
+    if (!navigator.clipboard) return false;
+    await navigator.clipboard.writeText(text);
+    return true;
   }
   _scrollDown() {
     this._pendingTimers.push(setTimeout(() => {
@@ -3381,6 +3458,19 @@ class PtBuscadorAgentforce extends i$1 {
                                         </div>
                                         ${msg.showCopiedToast ? b$1`
                                             <span class="copied-toast" aria-live="polite">Copiado para a área de transferência</span>
+                                        ` : ""}
+                                        ${msg.isLastAgent && this._hasRelatedQuestions ? b$1`
+                                            <div class="related-questions">
+                                                <span class="related-label">Perguntas relacionadas</span>
+                                                <div class="related-pills" role="group" aria-label="Perguntas relacionadas">
+                                                    ${this._relatedQuestions.map((q2) => b$1`
+                                                        <button class="related-pill" type="button"
+                                                            data-label=${q2.label}
+                                                            @click=${this.handleRelatedQuestion}
+                                                            ?disabled=${this._isLoading}>${q2.label}</button>
+                                                    `)}
+                                                </div>
+                                            </div>
                                         ` : ""}
                                     </div>
                                 `}
@@ -3472,7 +3562,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             border-radius: var(--radius-card);
             box-shadow: var(--shadow-2);
             width: calc(100% - 2 * var(--space-3));
-            max-width: 894px;
+            max-width: 100%;
             margin: 0 auto 16px;
             display: flex;
             flex-direction: column;
@@ -3816,22 +3906,6 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             color: var(--color-error);  /* Cor Erro */
         }
 
-        .retry-button {
-            background: var(--color-error); /* Cor Erro */
-            color: var(--color-secondary);
-            border: none;
-            border-radius: var(--radius-pill);
-            padding: 6px var(--space-2); /* 6px 16px */
-            font-size: 14px;
-            font-family: inherit;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.15s ease;
-            white-space: nowrap;
-        }
-
-        .retry-button:hover { opacity: 0.85; }
-
         /* ── Ações de mensagem ── */
         .msg-actions {
             display: flex;
@@ -3877,6 +3951,52 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             padding-left: 4px;
             animation: toastLifecycle 3s ease forwards;
         }
+
+        /* ── Perguntas relacionadas ── */
+        .related-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .related-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-n600);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .related-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .related-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            color: var(--color-primary);
+            background: var(--color-secondary);
+            border: 1.5px solid var(--color-n400);
+            border-radius: var(--radius-pill);
+            cursor: pointer;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+            line-height: 1.4;
+        }
+
+        .related-pill:hover:not(:disabled) {
+            background: var(--color-primary);
+            color: var(--color-secondary);
+            border-color: var(--color-primary);
+        }
+
+        .related-pill:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* ── Scrollbar ── */
         .chatbox-messages::-webkit-scrollbar { width: 6px; }
@@ -3928,7 +4048,8 @@ __publicField(PtBuscadorAgentforce, "properties", {
   _errorMessage: { state: true },
   _isTimeoutError: { state: true },
   _hasStartedConversation: { state: true },
-  _followUpQuery: { state: true }
+  _followUpQuery: { state: true },
+  _relatedQuestions: { state: true }
 });
 customElements.define("pt-buscador-agentforce", PtBuscadorAgentforce);
 document.addEventListener("DOMContentLoaded", () => {
