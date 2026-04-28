@@ -4125,6 +4125,18 @@ document.addEventListener("DOMContentLoaded", () => {
     showChat(((_a2 = e2.detail) == null ? void 0 : _a2.searchTerm) || "");
   });
   document.addEventListener("chatclose", () => showResults());
+  try {
+    const raw = new URLSearchParams(window.location.search).get("q") || "";
+    const term = raw.replace(/<[^>]*>/g, "").replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "").trim().slice(0, 200);
+    if (term) {
+      document.dispatchEvent(new CustomEvent("buscador-search", {
+        bubbles: true,
+        composed: true,
+        detail: { term }
+      }));
+    }
+  } catch (_2) {
+  }
 });
 export {
   PtBuscadorAgentforce,
