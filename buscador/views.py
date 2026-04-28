@@ -10,6 +10,7 @@ Credenciais lidas exclusivamente de variáveis de ambiente via settings/.env.
 Dependência: pip install requests
 """
 
+import time
 import threading
 
 import requests
@@ -21,16 +22,22 @@ from django.utils.decorators import method_decorator
 
 
 # ─── Cache de token Salesforce (em memória, por processo) ────────────────────
+# Tokens SF duram 2h por padrão; renovamos 10 min antes para evitar uso de token expirado.
 
+_SF_TOKEN_TTL   = 6600  # segundos (110 min)
 _sf_token_lock  = threading.Lock()
-_sf_token_cache = {}   # {(instance_url, client_id): access_token}
+_sf_token_cache = {}   # {(instance_url, client_id): (access_token, expires_at)}
 
 
 def _get_sf_token(instance_url, client_id, client_secret):
     key = (instance_url, client_id)
+    now = time.monotonic()
     with _sf_token_lock:
-        if _sf_token_cache.get(key):
-            return _sf_token_cache[key]
+        cached = _sf_token_cache.get(key)
+        if cached:
+            token, expires_at = cached
+            if now < expires_at:
+                return token
 
         resp = requests.post(
             f"{instance_url}/services/oauth2/token",
@@ -48,7 +55,7 @@ def _get_sf_token(instance_url, client_id, client_secret):
             )
 
         token = resp.json()["access_token"]
-        _sf_token_cache[key] = token
+        _sf_token_cache[key] = (token, now + _SF_TOKEN_TTL)
         return token
 
 
@@ -88,7 +95,7 @@ class BuscadorAgentforceView(View):
                         "Content-Type":  "application/json",
                         "Authorization": f"Bearer {token}",
                     },
-                    timeout=30,
+                    timeout=60,
                 )
             except requests.RequestException as exc:
                 return JsonResponse(
