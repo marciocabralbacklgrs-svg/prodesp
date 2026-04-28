@@ -595,6 +595,16 @@ class PtBuscadorCampo extends i$1 {
     this.frequentSearches = ["Novo RG", "Renovar CNH", "Pagar o IPVA do carro"];
     this._inputValue = "";
   }
+  // ─── Public API ───────────────────────────────────────────────────────────
+  get value() {
+    return this._inputValue;
+  }
+  set value(v2) {
+    var _a2;
+    this._inputValue = v2 || "";
+    const input = (_a2 = this.shadowRoot) == null ? void 0 : _a2.querySelector(".search-input");
+    if (input) input.value = this._inputValue;
+  }
   // ─── Handlers ─────────────────────────────────────────────────────────────
   _handleInput(e2) {
     this._inputValue = e2.target.value;
@@ -1579,7 +1589,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 0;
             min-width: 0;
         }
 
@@ -1598,7 +1608,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             font-weight: 400;
             line-height: 20px;
             color: var(--color-n900);
-            margin: 0;
+            margin: 14px 0 0;
         }
 
         .service-tags {
@@ -4129,6 +4139,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const raw = new URLSearchParams(window.location.search).get("q") || "";
     const term = raw.replace(/<[^>]*>/g, "").replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "").trim().slice(0, 200);
     if (term) {
+      const campo = document.querySelector("pt-buscador-campo");
+      const fill = () => {
+        if (campo) campo.value = term;
+      };
+      (campo == null ? void 0 : campo.updateComplete) ? campo.updateComplete.then(fill) : fill();
       document.dispatchEvent(new CustomEvent("buscador-search", {
         bubbles: true,
         composed: true,
