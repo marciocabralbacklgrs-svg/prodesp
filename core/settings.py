@@ -83,3 +83,6 @@ STORAGES = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ─── Funcionalidades opcionais ────────────────────────────────────────────────
+ENABLE_VLIBRAS = config('ENABLE_VLIBRAS', default=False, cast=bool)

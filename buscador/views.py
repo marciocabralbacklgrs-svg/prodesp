@@ -157,4 +157,6 @@ class BuscadorSearchView(View):
 from django.shortcuts import render
 
 def buscador_page(request):
-    return render(request, "buscador/index.html")
+    return render(request, "buscador/index.html", {
+        "enable_vlibras": getattr(settings, "ENABLE_VLIBRAS", False),
+    })

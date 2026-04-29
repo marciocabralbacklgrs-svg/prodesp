@@ -587,7 +587,24 @@ const rawlineFont = i$4`
         font-display: swap;
     }
 `;
-class PtBuscadorCampo extends i$1 {
+function injectStyles(tag, styles) {
+  if (document.head.querySelector(`style[data-buscador="${tag}"]`)) return;
+  const raw = styles.map((s2) => s2.cssText).join("\n");
+  const css = raw.replace(/:host(\([^)]*\))?/g, (_2, sel) => tag + (sel || ""));
+  const el = document.createElement("style");
+  el.dataset.buscador = tag;
+  el.textContent = css;
+  document.head.appendChild(el);
+}
+const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
+  // ─── Light DOM ────────────────────────────────────────────────────────────
+  createRenderRoot() {
+    return this;
+  }
+  connectedCallback() {
+    super.connectedCallback();
+    injectStyles("pt-buscador-campo", _PtBuscadorCampo.styles);
+  }
   constructor() {
     super();
     this.title = "O que você procura?";
@@ -600,9 +617,8 @@ class PtBuscadorCampo extends i$1 {
     return this._inputValue;
   }
   set value(v2) {
-    var _a2;
     this._inputValue = v2 || "";
-    const input = (_a2 = this.shadowRoot) == null ? void 0 : _a2.querySelector(".search-input");
+    const input = this.querySelector(".buscador-search-input");
     if (input) input.value = this._inputValue;
   }
   // ─── Handlers ─────────────────────────────────────────────────────────────
@@ -615,7 +631,7 @@ class PtBuscadorCampo extends i$1 {
   _handlePill(e2) {
     const label = e2.currentTarget.dataset.label;
     this._inputValue = label;
-    const input = this.shadowRoot.querySelector(".search-input");
+    const input = this.querySelector(".buscador-search-input");
     if (input) input.value = label;
     this._doSearch();
   }
@@ -633,18 +649,18 @@ class PtBuscadorCampo extends i$1 {
   render() {
     var _a2;
     return b$1`
-            <section class="search-section">
-                <div class="search-inner">
-                    <h2 class="search-title">${this.title}</h2>
+            <section class="buscador-search-section">
+                <div class="buscador-search-inner">
+                    <h2 class="buscador-search-title">${this.title}</h2>
 
-                    <div class="search-bar" data-id="search-bar">
-                        <input class="search-input" type="text"
+                    <div class="buscador-search-bar" data-id="search-bar">
+                        <input class="buscador-search-input" type="text"
                             data-id="search-input"
                             placeholder=${this.placeholder}
                             aria-label="Campo de busca"
                             @input=${this._handleInput}
                             @keydown=${this._handleKeyDown} />
-                        <button class="search-btn" type="button" data-id="search-btn" aria-label="Buscar"
+                        <button class="buscador-search-btn" type="button" data-id="search-btn" aria-label="Buscar"
                             @click=${this._doSearch}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2"
@@ -657,11 +673,11 @@ class PtBuscadorCampo extends i$1 {
                     </div>
 
                     ${((_a2 = this.frequentSearches) == null ? void 0 : _a2.length) ? b$1`
-                        <div class="frequent-searches">
-                            <span class="frequent-label">Buscas frequentes</span>
-                            <div class="frequent-pills" role="group" aria-label="Buscas frequentes">
+                        <div class="buscador-frequent-searches">
+                            <span class="buscador-frequent-label">Buscas frequentes</span>
+                            <div class="buscador-frequent-pills" role="group" aria-label="Buscas frequentes">
                                 ${this.frequentSearches.map((label) => b$1`
-                                    <button class="frequent-pill" type="button"
+                                    <button class="buscador-frequent-pill" type="button"
                                         data-id="frequent-pill"
                                         data-label=${label}
                                         @click=${this._handlePill}>
@@ -675,9 +691,9 @@ class PtBuscadorCampo extends i$1 {
             </section>
         `;
   }
-}
+};
 // ─── Styles ───────────────────────────────────────────────────────────────
-__publicField(PtBuscadorCampo, "styles", [rawlineFont, i$4`
+__publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
 
         /* ── Design System Tokens — UI Kit Poupatempo SP.GOV.BR ── */
         :host {
@@ -718,13 +734,13 @@ __publicField(PtBuscadorCampo, "styles", [rawlineFont, i$4`
 
         *, *::before, *::after { box-sizing: border-box; }
 
-        .search-section {
+        .buscador-search-section {
             width: 100%;
             padding: var(--space-6) var(--space-3) var(--space-4);
             background: var(--color-secondary);
         }
 
-        .search-inner {
+        .buscador-search-inner {
             max-width: 894px;
             margin: 0 auto;
             display: flex;
@@ -734,7 +750,7 @@ __publicField(PtBuscadorCampo, "styles", [rawlineFont, i$4`
         }
 
         /* ── Título ── */
-        .search-title {
+        .buscador-search-title {
             font-size: 24.19px;          /* H4 Desktop — Rawline SemiBold */
             font-weight: 600;
             line-height: 27.81px;
@@ -745,7 +761,7 @@ __publicField(PtBuscadorCampo, "styles", [rawlineFont, i$4`
         }
 
         /* ── Barra de busca ── */
-        .search-bar {
+        .buscador-search-bar {
             display: flex;
             align-items: center;
             width: 100%;
@@ -757,12 +773,12 @@ __publicField(PtBuscadorCampo, "styles", [rawlineFont, i$4`
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .search-bar:focus-within {
+        .buscador-search-bar:focus-within {
             border-color: var(--color-info);
             box-shadow: 0 0 0 3px rgba(3, 78, 162, 0.12);
         }
 
-        .search-input {
+        .buscador-search-input {
             flex: 1;
             border: none;
             outline: none;
@@ -775,13 +791,13 @@ __publicField(PtBuscadorCampo, "styles", [rawlineFont, i$4`
             min-width: 0;
         }
 
-        .search-input::placeholder {
+        .buscador-search-input::placeholder {
             color: var(--color-n500);    /* Neutra 500 */
             font-style: italic;          /* Placeholder — Rawline Italic */
             font-weight: 400;
         }
 
-        .search-btn {
+        .buscador-search-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -794,30 +810,30 @@ __publicField(PtBuscadorCampo, "styles", [rawlineFont, i$4`
             transition: color 0.15s ease;
         }
 
-        .search-btn:hover { color: var(--color-info); }
+        .buscador-search-btn:hover { color: var(--color-info); }
 
         /* ── Buscas frequentes ── */
-        .frequent-searches {
+        .buscador-frequent-searches {
             display: flex;
             flex-direction: column;
             gap: var(--space-1);         /* 8px */
             align-self: flex-start;
         }
 
-        .frequent-label {
+        .buscador-frequent-label {
             font-size: 14px;             /* Label — Rawline SemiBold */
             font-weight: 600;
             line-height: 20.3px;
             color: var(--color-n700);
         }
 
-        .frequent-pills {
+        .buscador-frequent-pills {
             display: flex;
             gap: var(--space-1);         /* 8px */
             flex-wrap: wrap;
         }
 
-        .frequent-pill {
+        .buscador-frequent-pill {
             background: var(--color-secondary);
             border: 1.5px solid var(--color-primary);
             border-radius: var(--radius-pill);
@@ -831,40 +847,41 @@ __publicField(PtBuscadorCampo, "styles", [rawlineFont, i$4`
             transition: background-color 0.15s ease, color 0.15s ease;
         }
 
-        .frequent-pill:hover {
+        .buscador-frequent-pill:hover {
             background: var(--color-primary);
             color: var(--color-secondary);
         }
 
         /* ── Responsividade ── */
         @media (max-width: 767px) {
-            .search-section {
+            .buscador-search-section {
                 padding: var(--space-5) var(--space-2) var(--space-3);
             }
-            .search-title {
+            .buscador-search-title {
                 font-size: 20.16px;      /* H3 Mobile */
                 line-height: 23.18px;
             }
-            .search-bar {
+            .buscador-search-bar {
                 padding: var(--space-2) var(--space-2);
             }
-            .search-input {
+            .buscador-search-input {
                 font-size: 14px;         /* Body Mobile */
                 line-height: 20.3px;
             }
         }
     `]);
 // ─── Properties ──────────────────────────────────────────────────────────
-__publicField(PtBuscadorCampo, "properties", {
+__publicField(_PtBuscadorCampo, "properties", {
   title: { type: String },
   placeholder: { type: String },
   frequentSearches: { type: Array, attribute: "frequent-searches" }
 });
+let PtBuscadorCampo = _PtBuscadorCampo;
 customElements.define("pt-buscador-campo", PtBuscadorCampo);
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 const MIN_SEARCH_LENGTH = 2;
-class PtBuscadorIndicePesquisa extends i$1 {
+const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
   // ─── Constructor ──────────────────────────────────────────────────────────
   constructor() {
     super();
@@ -887,6 +904,14 @@ class PtBuscadorIndicePesquisa extends i$1 {
     this._isMobileSheetExpanded = false;
     this._simEncontreiFeedback = false;
     this._origem = "";
+  }
+  // ─── Light DOM ────────────────────────────────────────────────────────────
+  createRenderRoot() {
+    return this;
+  }
+  connectedCallback() {
+    super.connectedCallback();
+    injectStyles("pt-buscador-indice-pesquisa", _PtBuscadorIndicePesquisa.styles);
   }
   set searchTerm(value) {
     var _a2;
@@ -920,8 +945,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
     return this._searchTermValue;
   }
   getAnchorOffsetTop() {
-    var _a2;
-    const anchor = (_a2 = this.shadowRoot) == null ? void 0 : _a2.querySelector("[data-results-anchor]");
+    const anchor = this.querySelector("[data-results-anchor]");
     if (!anchor) return 0;
     return Math.round(anchor.getBoundingClientRect().top - this.getBoundingClientRect().top);
   }
@@ -965,7 +989,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
     return [0, 1, 2, 3, 4];
   }
   get _feedbackSheetClass() {
-    return this._isMobileSheetExpanded ? "feedback-sheet feedback-sheet--expanded" : "feedback-sheet";
+    return this._isMobileSheetExpanded ? "buscador-feedback-sheet buscador-feedback-sheet--expanded" : "buscador-feedback-sheet";
   }
   get _displayedResults() {
     const start = (this._currentPage - 1) * PAGE_SIZE;
@@ -990,7 +1014,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
   }
   _makePage(num, current) {
     const isActive = num === current;
-    return { key: String(num), label: String(num), page: num, isEllipsis: false, btnClass: isActive ? "page-btn page-btn--active" : "page-btn" };
+    return { key: String(num), label: String(num), page: num, isEllipsis: false, btnClass: isActive ? "buscador-page-btn buscador-page-btn--active" : "buscador-page-btn" };
   }
   // ─── Event handlers ───────────────────────────────────────────────────────
   handleSimEncontrei() {
@@ -1097,8 +1121,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
     });
   }
   _scrollToResults() {
-    var _a2, _b2, _c;
-    const anchor = ((_a2 = this.shadowRoot) == null ? void 0 : _a2.querySelector("[data-results-anchor]")) || ((_b2 = this.shadowRoot) == null ? void 0 : _b2.querySelector(".search-results")) || ((_c = this.shadowRoot) == null ? void 0 : _c.querySelector(".service-list"));
+    const anchor = this.querySelector("[data-results-anchor]") || this.querySelector(".buscador-search-results") || this.querySelector(".buscador-service-list");
     if (anchor) anchor.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   async _fetchServices(term, signal) {
@@ -1151,81 +1174,81 @@ class PtBuscadorIndicePesquisa extends i$1 {
             <div class="buscador-wrapper">
 
                 ${this._isLoading ? b$1`
-                    <div class="skeleton-container" data-id="results-loading" role="status" aria-live="polite" aria-label="Carregando resultados">
-                        <div class="loading-label-wrapper">
-                            <span class="loading-text">Carregando resultados</span>
-                            <span class="loading-dots" aria-hidden="true"></span>
+                    <div class="buscador-skeleton-container" data-id="results-loading" role="status" aria-live="polite" aria-label="Carregando resultados">
+                        <div class="buscador-loading-label-wrapper">
+                            <span class="buscador-loading-text">Carregando resultados</span>
+                            <span class="buscador-loading-dots" aria-hidden="true"></span>
                         </div>
                         ${this._skeletonItems.map((i3) => b$1`
-                            <div key=${i3} class="skeleton-card" aria-hidden="true"></div>
+                            <div key=${i3} class="buscador-skeleton-card" aria-hidden="true"></div>
                         `)}
                     </div>
 
                 ` : this._hasSearched && this._hasError ? b$1`
-                    <div class="search-results">
-                        <p class="error-message" role="alert">
+                    <div class="buscador-search-results">
+                        <p class="buscador-search-error" role="alert">
                             Não foi possível carregar os resultados. Tente novamente em alguns instantes.
                         </p>
                     </div>
 
                 ` : this._hasNoResults ? b$1`
-                    <div class="search-results" data-results-anchor data-id="results-empty">
-                        <div class="feedback-banner" data-id="feedback-banner" role="region" aria-label="Feedback de pesquisa">
-                            <span class="feedback-question">Encontrou o que procurava?</span>
-                            <div class="feedback-actions">
-                                <button class=${this._simEncontreiFeedback ? "btn-feedback btn-feedback--confirmed" : "btn-feedback btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
+                    <div class="buscador-search-results" data-results-anchor data-id="results-empty">
+                        <div class="buscador-feedback-banner" data-id="feedback-banner" role="region" aria-label="Feedback de pesquisa">
+                            <span class="buscador-feedback-question">Encontrou o que procurava?</span>
+                            <div class="buscador-feedback-actions">
+                                <button class=${this._simEncontreiFeedback ? "buscador-btn-feedback buscador-btn-feedback--confirmed" : "buscador-btn-feedback buscador-btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
                                     ${this._thumbsUpSvg}
                                     Sim, encontrei
                                 </button>
-                                <button class="btn-feedback btn-feedback--filled" data-id="btn-nao-encontrei" type="button" @click=${this.handleNaoEncontrei}>
+                                <button class="buscador-btn-feedback buscador-btn-feedback--filled" data-id="btn-nao-encontrei" type="button" @click=${this.handleNaoEncontrei}>
                                     Não encontrei
                                     ${this._starSvgDesktop}
                                 </button>
                             </div>
                         </div>
-                        <div class="results-count" data-id="results-count" aria-live="polite">
-                            <strong class="results-number">0 resultados</strong>
-                            <span class="results-suffix"> encontrados</span>
-                            ${this._origem ? b$1`<span class="origem-badge">${this._origem}</span>` : ""}
+                        <div class="buscador-results-count" data-id="results-count" aria-live="polite">
+                            <strong class="buscador-results-number">0 resultados</strong>
+                            <span class="buscador-results-suffix"> encontrados</span>
+                            ${this._origem ? b$1`<span class="buscador-origem-badge">${this._origem}</span>` : ""}
                         </div>
-                        <p class="no-results-message" data-id="no-results-message">Nenhum resultado encontrado para a sua busca. Tente outros termos ou explore os serviços disponíveis.</p>
+                        <p class="buscador-no-results-message" data-id="no-results-message">Nenhum resultado encontrado para a sua busca. Tente outros termos ou explore os serviços disponíveis.</p>
                     </div>
 
                 ` : this._hasResults ? b$1`
-                    <div class="search-results" data-results-anchor data-id="results-container">
+                    <div class="buscador-search-results" data-results-anchor data-id="results-container">
 
-                        <div class="feedback-banner" data-id="feedback-banner" role="region" aria-label="Feedback de pesquisa">
-                            <span class="feedback-question">Encontrou o que procurava?</span>
-                            <div class="feedback-actions">
-                                <button class=${this._simEncontreiFeedback ? "btn-feedback btn-feedback--confirmed" : "btn-feedback btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
+                        <div class="buscador-feedback-banner" data-id="feedback-banner" role="region" aria-label="Feedback de pesquisa">
+                            <span class="buscador-feedback-question">Encontrou o que procurava?</span>
+                            <div class="buscador-feedback-actions">
+                                <button class=${this._simEncontreiFeedback ? "buscador-btn-feedback buscador-btn-feedback--confirmed" : "buscador-btn-feedback buscador-btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
                                     ${this._thumbsUpSvg}
                                     Sim, encontrei
                                 </button>
-                                <button class="btn-feedback btn-feedback--filled" data-id="btn-nao-encontrei" type="button" @click=${this.handleNaoEncontrei}>
+                                <button class="buscador-btn-feedback buscador-btn-feedback--filled" data-id="btn-nao-encontrei" type="button" @click=${this.handleNaoEncontrei}>
                                     Não encontrei
                                     ${this._starSvgDesktop}
                                 </button>
                             </div>
                         </div>
 
-                        <div class="results-count" data-id="results-count" aria-live="polite">
-                            <strong class="results-number">${this._totalResults} resultados</strong>
-                            <span class="results-suffix"> encontrados</span>
-                            ${this._origem ? b$1`<span class="origem-badge">${this._origem}</span>` : ""}
+                        <div class="buscador-results-count" data-id="results-count" aria-live="polite">
+                            <strong class="buscador-results-number">${this._totalResults} resultados</strong>
+                            <span class="buscador-results-suffix"> encontrados</span>
+                            ${this._origem ? b$1`<span class="buscador-origem-badge">${this._origem}</span>` : ""}
                         </div>
 
-                        <div class="service-list" data-id="service-list" role="list">
+                        <div class="buscador-service-list" data-id="service-list" role="list">
                             ${this._displayedResults.map((s2) => b$1`
-                                <a class="service-card" data-id="service-card" role="listitem" href=${s2.link} target="_blank" rel="noopener noreferrer">
-                                    <div class="service-card-content">
-                                        <h3 class="service-title" data-id="service-title">${s2.title}</h3>
-                                        <p class="service-desc">Órgão Responsável: <strong>${s2.orgao}</strong></p>
-                                        <div class="service-tags">
+                                <a class="buscador-service-card" data-id="service-card" role="listitem" href=${s2.link} target="_blank" rel="noopener noreferrer">
+                                    <div class="buscador-service-card-content">
+                                        <h3 class="buscador-service-title" data-id="service-title">${s2.title}</h3>
+                                        <p class="buscador-service-desc">Órgão Responsável: <strong>${s2.orgao}</strong></p>
+                                        <div class="buscador-service-tags">
                                             Serviço
-                                            ${s2.tags.map((tag) => b$1`<span class="service-tag">${tag}</span>`)}
+                                            ${s2.tags.map((tag) => b$1`<span class="buscador-service-tag">${tag}</span>`)}
                                         </div>
                                     </div>
-                                    <div class="service-card-chevron" aria-hidden="true">
+                                    <div class="buscador-service-card-chevron" aria-hidden="true">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="9 18 15 12 9 6"/>
                                         </svg>
@@ -1235,16 +1258,16 @@ class PtBuscadorIndicePesquisa extends i$1 {
                         </div>
 
                         ${this._showPagination ? b$1`
-                            <nav class="pagination" data-id="pagination" aria-label="Paginação de resultados">
-                                <button class="page-btn" data-id="pagination-prev" type="button"
+                            <nav class="buscador-pagination" data-id="pagination" aria-label="Paginação de resultados">
+                                <button class="buscador-page-btn" data-id="pagination-prev" type="button"
                                     ?disabled=${!this._hasPrev} @click=${this.prevPage} aria-label="Página anterior">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <polyline points="15 18 9 12 15 6"/>
                                     </svg>
                                 </button>
                                 ${this._paginationPages.map((pg) => b$1`
-                                    <span class="page-item">
-                                        ${pg.isEllipsis ? b$1`<span class="page-ellipsis" aria-hidden="true">...</span>` : b$1`<button class=${pg.btnClass} data-id="pagination-page" type="button"
+                                    <span class="buscador-page-item">
+                                        ${pg.isEllipsis ? b$1`<span class="buscador-page-ellipsis" aria-hidden="true">...</span>` : b$1`<button class=${pg.btnClass} data-id="pagination-page" type="button"
                                                     data-page=${pg.page} @click=${this.goToPage}
                                                     aria-label="Página ${pg.label}"
                                                     aria-current=${pg.btnClass.includes("active") ? "page" : "false"}>
@@ -1252,7 +1275,7 @@ class PtBuscadorIndicePesquisa extends i$1 {
                                                 </button>`}
                                     </span>
                                 `)}
-                                <button class="page-btn" data-id="pagination-next" type="button"
+                                <button class="buscador-page-btn" data-id="pagination-next" type="button"
                                     ?disabled=${!this._hasNext} @click=${this.nextPage} aria-label="Próxima página">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <polyline points="9 18 15 12 9 6"/>
@@ -1269,20 +1292,20 @@ class PtBuscadorIndicePesquisa extends i$1 {
                          role="region"
                          aria-label="Feedback de pesquisa"
                          data-id="feedback-sheet">
-                        <div class="feedback-sheet-handle"
+                        <div class="buscador-feedback-sheet-handle"
                              @touchstart=${this.handleTouchStart}
                              @touchend=${this.handleTouchEnd}>
-                            <div class="feedback-sheet-handle-bar"></div>
+                            <div class="buscador-feedback-sheet-handle-bar"></div>
                         </div>
-                        <div class="feedback-sheet-body">
-                            <span class="feedback-question">Encontrou o que procurava?</span>
-                            <div class="feedback-sheet-btns">
-                                <div class="feedback-actions">
-                                    <button class=${this._simEncontreiFeedback ? "btn-feedback btn-feedback--confirmed" : "btn-feedback btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
+                        <div class="buscador-feedback-sheet-body">
+                            <span class="buscador-feedback-question">Encontrou o que procurava?</span>
+                            <div class="buscador-feedback-sheet-btns">
+                                <div class="buscador-feedback-actions">
+                                    <button class=${this._simEncontreiFeedback ? "buscador-btn-feedback buscador-btn-feedback--confirmed" : "buscador-btn-feedback buscador-btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
                                         ${this._thumbsUpSvg}
                                         Sim, encontrei
                                     </button>
-                                    <button class="btn-feedback btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
+                                    <button class="buscador-btn-feedback buscador-btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
                                         Não, pesquisar com IA
                                         ${this._starSvgMobile}
                                     </button>
@@ -1295,9 +1318,9 @@ class PtBuscadorIndicePesquisa extends i$1 {
             </div>
         `;
   }
-}
+};
 // ─── Styles ───────────────────────────────────────────────────────────────
-__publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
+__publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
 
         /* ── Design System Tokens — UI Kit Poupatempo SP.GOV.BR ── */
         :host {
@@ -1349,26 +1372,26 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         /* ── Skeleton ── */
-        @keyframes shimmer {
+        @keyframes buscador-shimmer {
             0%   { background-position: -400px 0; }
             100% { background-position:  400px 0; }
         }
 
-        .skeleton-container {
+        .buscador-skeleton-container {
             display: flex;
             flex-direction: column;
             gap: var(--space-2);        /* 16px */
             width: 100%;
         }
 
-        .loading-label-wrapper {
+        .buscador-loading-label-wrapper {
             display: flex;
             align-items: center;
             gap: var(--space-1);        /* 8px */
             height: 24px;
         }
 
-        .loading-text {
+        .buscador-loading-text {
             font-size: 16.8px;
             font-weight: 400;
             line-height: 19.32px;
@@ -1383,10 +1406,10 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: shimmer 1.8s linear infinite;
+            animation: buscador-shimmer 1.8s linear infinite;
         }
 
-        .loading-dots::after {
+        .buscador-loading-dots::after {
             content: '...';
             font-size: 16.8px;
             background: linear-gradient(
@@ -1399,10 +1422,10 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: shimmer 1.8s linear infinite;
+            animation: buscador-shimmer 1.8s linear infinite;
         }
 
-        .skeleton-card {
+        .buscador-skeleton-card {
             height: 80px;
             border-radius: var(--radius-card);
             background: linear-gradient(
@@ -1412,12 +1435,12 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
                 var(--color-n400) 80%
             );
             background-size: 400px 100%;
-            animation: shimmer 1.8s linear infinite;
+            animation: buscador-shimmer 1.8s linear infinite;
             border-bottom: 1px solid var(--color-n300);
         }
 
         /* ── Resultados ── */
-        .search-results {
+        .buscador-search-results {
             display: flex;
             flex-direction: column;
             gap: var(--space-3);        /* 24px */
@@ -1425,7 +1448,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         /* ── Banner de feedback — desktop/tablet ── */
-        .feedback-banner {
+        .buscador-feedback-banner {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -1438,21 +1461,21 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             box-shadow: var(--shadow-1);
         }
 
-        .feedback-question {
+        .buscador-feedback-question {
             font-size: 16.8px;          /* Body Desktop */
             font-weight: 400;
             line-height: 19.32px;
             color: var(--color-primary);
         }
 
-        .feedback-actions {
+        .buscador-feedback-actions {
             display: flex;
             gap: var(--space-1);        /* 8px */
             flex-wrap: wrap;
         }
 
         /* ── Botões de feedback ── */
-        .btn-feedback {
+        .buscador-btn-feedback {
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -1465,27 +1488,27 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             transition: opacity 0.15s ease;
         }
 
-        .btn-feedback:hover { opacity: 0.85; }
+        .buscador-btn-feedback:hover { opacity: 0.85; }
 
-        .btn-feedback--outlined {
+        .buscador-btn-feedback--outlined {
             background: var(--color-secondary);
             border: 1.5px solid var(--color-primary);
             color: var(--color-primary);
         }
 
-        .btn-feedback--filled {
+        .buscador-btn-feedback--filled {
             background: var(--color-primary);
             border: 1.5px solid var(--color-primary);
             color: var(--color-secondary);
         }
 
-        .btn-feedback--confirmed {
+        .buscador-btn-feedback--confirmed {
             background: #E6F4EA;
             border: 1.5px solid #2E7D32;
             color: #2E7D32;
         }
 
-        .origem-badge {
+        .buscador-origem-badge {
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -1502,11 +1525,11 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         /* ── Bottom sheet móvel — oculto no desktop/tablet ── */
-        .feedback-sheet {
+        .buscador-feedback-sheet {
             display: none;
         }
 
-        .feedback-sheet-handle {
+        .buscador-feedback-sheet-handle {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -1516,14 +1539,14 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             touch-action: none;
         }
 
-        .feedback-sheet-handle-bar {
+        .buscador-feedback-sheet-handle-bar {
             width: 32px;
             height: 4px;
             border-radius: 2px;
             background: var(--color-n400);
         }
 
-        .feedback-sheet-body {
+        .buscador-feedback-sheet-body {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1533,17 +1556,17 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         /* ── Contagem ── */
-        .results-count {
+        .buscador-results-count {
             font-size: 16.8px;          /* Body Desktop */
             line-height: 19.32px;
             color: var(--color-n900);
         }
 
-        .results-number { font-weight: 700; color: var(--color-primary); }
-        .results-suffix { font-weight: 400; }
+        .buscador-results-number { font-weight: 700; color: var(--color-primary); }
+        .buscador-results-suffix { font-weight: 400; }
 
         /* ── Sem resultados ── */
-        .no-results-message {
+        .buscador-no-results-message {
             font-size: 16.8px;
             font-weight: 400;
             line-height: 19.32px;
@@ -1554,7 +1577,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         /* ── Erro de API ── */
-        .error-message {
+        .buscador-search-error {
             font-size: 16.8px;
             font-weight: 400;
             line-height: 19.32px;
@@ -1567,9 +1590,9 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         /* ── Cards de serviço ── */
-        .service-list { display: flex; flex-direction: column; }
+        .buscador-service-list { display: flex; flex-direction: column; }
 
-        .service-card {
+        .buscador-service-card {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -1582,10 +1605,10 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             color: inherit;
         }
 
-        .service-card:hover { background-color: var(--color-n100); }
-        .service-card:first-child { border-top: 1px solid var(--color-n300); }
+        .buscador-service-card:hover { background-color: var(--color-n100); }
+        .buscador-service-card:first-child { border-top: 1px solid var(--color-n300); }
 
-        .service-card-content {
+        .buscador-service-card-content {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -1593,7 +1616,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             min-width: 0;
         }
 
-        .service-title {
+        .buscador-service-title {
             font-size: 20.16px;         /* H5 Desktop — Rawline Bold */
             font-weight: 700;
             line-height: 23.18px;
@@ -1603,7 +1626,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             text-decoration: none;
         }
 
-        .service-desc {
+        .buscador-service-desc {
             font-size: 14px;
             font-weight: 400;
             line-height: 20px;
@@ -1611,7 +1634,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             margin: 14px 0 0;
         }
 
-        .service-tags {
+        .buscador-service-tags {
             display: flex;
             align-items: center;
             gap: var(--space-1);        /* 8px */
@@ -1621,7 +1644,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             color: var(--color-primary);
         }
 
-        .service-tag {
+        .buscador-service-tag {
             display: inline-block;
             background: var(--color-primary);
             color: var(--color-secondary);
@@ -1633,7 +1656,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             white-space: nowrap;
         }
 
-        .service-card-chevron {
+        .buscador-service-card-chevron {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1643,7 +1666,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         /* ── Paginação ── */
-        .pagination {
+        .buscador-pagination {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1652,9 +1675,9 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             padding: var(--space-1) 0;  /* 8px 0 */
         }
 
-        .page-item { display: inline-flex; }
+        .buscador-page-item { display: inline-flex; }
 
-        .page-btn {
+        .buscador-page-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -1673,26 +1696,26 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             padding: 0;
         }
 
-        .page-btn:hover:not(:disabled) {
+        .buscador-page-btn:hover:not(:disabled) {
             background: var(--color-n200);
             border-color: var(--color-n400);
         }
 
-        .page-btn--active {
+        .buscador-page-btn--active {
             background: var(--color-primary);
             color: var(--color-secondary);
             font-weight: 700;
             border-color: var(--color-primary);
         }
 
-        .page-btn--active:hover {
+        .buscador-page-btn--active:hover {
             background: var(--color-n900);
             border-color: var(--color-n900);
         }
 
-        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .buscador-page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        .page-ellipsis {
+        .buscador-page-ellipsis {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -1709,10 +1732,10 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             .buscador-wrapper { padding: var(--space-5) var(--space-2) var(--space-3); }
 
             /* Banner inline oculto no mobile */
-            .feedback-banner { display: none; }
+            .buscador-feedback-banner { display: none; }
 
             /* Bottom sheet: sticky na base da área do componente */
-            .feedback-sheet {
+            .buscador-feedback-sheet {
                 display: flex;
                 flex-direction: column;
                 align-items: stretch;
@@ -1725,7 +1748,7 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             }
 
             /* Botões colapsados por padrão */
-            .feedback-sheet-btns {
+            .buscador-feedback-sheet-btns {
                 max-height: 0;
                 overflow: hidden;
                 transition: max-height 300ms ease-out;
@@ -1733,51 +1756,51 @@ __publicField(PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             }
 
             /* Expandido: botões revelados */
-            .feedback-sheet--expanded .feedback-sheet-btns {
+            .buscador-feedback-sheet--expanded .buscador-feedback-sheet-btns {
                 max-height: 200px;
             }
 
-            .feedback-question {
+            .buscador-feedback-question {
                 font-size: 18px;
                 font-weight: 500;
                 line-height: 26px;
             }
 
             /* Padding dentro do container colapsável: invisível quando recolhido */
-            .feedback-actions {
+            .buscador-feedback-actions {
                 flex-direction: column;
                 width: 100%;
                 gap: 12px;
                 padding: 16px 0 40px;
             }
 
-            .btn-feedback {
+            .buscador-btn-feedback {
                 width: 100%;
                 justify-content: center;
                 padding: 14px var(--space-3);
                 font-size: 15px;
             }
 
-            .service-title {
+            .buscador-service-title {
                 font-size: 16.8px;      /* H4 Mobile */
                 line-height: 19.32px;
             }
 
-            .service-desc,
-            .results-count,
-            .no-results-message,
-            .error-message {
+            .buscador-service-desc,
+            .buscador-results-count,
+            .buscador-no-results-message,
+            .buscador-search-error {
                 font-size: 14px;        /* Body Mobile */
                 line-height: 20.3px;
             }
 
-            .service-card {
+            .buscador-service-card {
                 padding: var(--space-2) var(--space-2);
             }
         }
     `]);
 // ─── Reactive properties ──────────────────────────────────────────────────
-__publicField(PtBuscadorIndicePesquisa, "properties", {
+__publicField(_PtBuscadorIndicePesquisa, "properties", {
   searchApiUrl: { attribute: "search-api-url" },
   orquestradorApiUrl: { attribute: "orquestrador-api-url" },
   orquestradorClientId: { attribute: "orquestrador-client-id" },
@@ -1791,6 +1814,7 @@ __publicField(PtBuscadorIndicePesquisa, "properties", {
   _simEncontreiFeedback: { state: true },
   _origem: { state: true }
 });
+let PtBuscadorIndicePesquisa = _PtBuscadorIndicePesquisa;
 customElements.define("pt-buscador-indice-pesquisa", PtBuscadorIndicePesquisa);
 /**
  * @license
@@ -3015,7 +3039,7 @@ const SHARE_SUBJECT = "Resposta do Assistente Poupatempo";
 const _mdRenderer = new g.Renderer();
 _mdRenderer.link = ({ href, title, text }) => `<a href="${href}" target="_blank" rel="noopener noreferrer"${title ? ` title="${title}"` : ""}>${text}</a>`;
 g.use({ renderer: _mdRenderer, breaks: true });
-class PtBuscadorAgentforce extends i$1 {
+const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
   // ─── Constructor ──────────────────────────────────────────────────────────
   constructor() {
     super();
@@ -3038,6 +3062,14 @@ class PtBuscadorAgentforce extends i$1 {
     this._hasStartedConversation = false;
     this._followUpQuery = "";
     this._relatedQuestions = [];
+  }
+  // ─── Light DOM ────────────────────────────────────────────────────────────
+  createRenderRoot() {
+    return this;
+  }
+  connectedCallback() {
+    super.connectedCallback();
+    injectStyles("pt-buscador-agentforce", _PtBuscadorAgentforce.styles);
   }
   set searchTerm(value) {
     const old = this._searchTermValue;
@@ -3064,10 +3096,9 @@ class PtBuscadorAgentforce extends i$1 {
   }
   // ─── Lifecycle ────────────────────────────────────────────────────────────
   updated() {
-    var _a2;
     if (this._shouldFocusFollowUp) {
       this._shouldFocusFollowUp = false;
-      const input = (_a2 = this.shadowRoot) == null ? void 0 : _a2.querySelector(".chatbox-input");
+      const input = this.querySelector(".buscador-chatbox-input");
       if (input) input.focus();
     }
   }
@@ -3203,21 +3234,21 @@ class PtBuscadorAgentforce extends i$1 {
       isUser: false,
       isAgent: false,
       isSystem: true,
-      wrapperClass: "msg-wrapper msg-wrapper--system",
+      wrapperClass: "buscador-msg-wrapper buscador-msg-wrapper--system",
       actionCopied: false,
       actionLiked: false,
       actionDisliked: false,
       actionShared: false,
       showCopiedToast: false,
-      copyBtnClass: "action-btn",
-      likeBtnClass: "action-btn",
-      dislikeBtnClass: "action-btn",
-      shareBtnClass: "action-btn"
+      copyBtnClass: "buscador-action-btn",
+      likeBtnClass: "buscador-action-btn",
+      dislikeBtnClass: "buscador-action-btn",
+      shareBtnClass: "buscador-action-btn"
     }];
     this._scrollDown();
   }
   _handleMsgAction(msgId, action) {
-    const cls = (active) => `action-btn${active ? " action-btn--active" : ""}`;
+    const cls = (active) => `buscador-action-btn${active ? " buscador-action-btn--active" : ""}`;
     this._messages = this._messages.map((msg) => {
       var _a2;
       if (msg.id !== msgId) return msg;
@@ -3276,16 +3307,16 @@ class PtBuscadorAgentforce extends i$1 {
       isAgent,
       isLastAgent: isAgent,
       feedbackId: isAgent ? feedbackId : null,
-      wrapperClass: type === "user" ? "msg-wrapper msg-wrapper--user" : "msg-wrapper msg-wrapper--ai",
+      wrapperClass: type === "user" ? "buscador-msg-wrapper buscador-msg-wrapper--user" : "buscador-msg-wrapper buscador-msg-wrapper--ai",
       actionCopied: false,
       actionLiked: false,
       actionDisliked: false,
       actionShared: false,
       showCopiedToast: false,
-      copyBtnClass: "action-btn",
-      likeBtnClass: "action-btn",
-      dislikeBtnClass: "action-btn",
-      shareBtnClass: "action-btn"
+      copyBtnClass: "buscador-action-btn",
+      likeBtnClass: "buscador-action-btn",
+      dislikeBtnClass: "buscador-action-btn",
+      shareBtnClass: "buscador-action-btn"
     }];
     this._scrollDown();
   }
@@ -3382,29 +3413,28 @@ class PtBuscadorAgentforce extends i$1 {
   }
   _scrollDown() {
     this._pendingTimers.push(setTimeout(() => {
-      var _a2;
-      const el = (_a2 = this.shadowRoot) == null ? void 0 : _a2.querySelector(".chatbox-messages");
+      const el = this.querySelector(".buscador-chatbox-messages");
       if (el) el.scrollTop = el.scrollHeight;
     }, 100));
   }
   // ─── Template ─────────────────────────────────────────────────────────────
   render() {
     return b$1`
-            <div class="chatbox-panel" data-id="chatbox-panel">
+            <div class="buscador-chatbox-panel" data-id="chatbox-panel">
 
-                <div class="chatbox-header">
-                    <div class="chatbox-header-left">
-                        <span class="ia-pill">
-                            <svg class="pill-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <div class="buscador-chatbox-header">
+                    <div class="buscador-chatbox-header-left">
+                        <span class="buscador-ia-pill">
+                            <svg class="buscador-pill-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M12 2l2.4 4.8L20 8l-4 3.9.9 5.5L12 14.8l-4.9 2.6.9-5.5L4 8l5.6-1.2L12 2z" fill="currentColor"/>
                             </svg>
                             Modo IA
                         </span>
-                        <span class="chatbox-title">Assistente Poupatempo</span>
+                        <span class="buscador-chatbox-title">Assistente Poupatempo</span>
                     </div>
                     ${this._hasStartedConversation ? b$1`
-                        <div class="header-actions">
-                            <button class="close-btn" data-id="chatbox-close-btn" type="button" @click=${this.handleClose}
+                        <div class="buscador-header-actions">
+                            <button class="buscador-close-btn" data-id="chatbox-close-btn" type="button" @click=${this.handleClose}
                                 ?disabled=${this._isLoading} title="Fechar conversa" aria-label="Fechar">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
@@ -3415,27 +3445,27 @@ class PtBuscadorAgentforce extends i$1 {
                 </div>
 
                 ${this._hasStartedConversation ? b$1`
-                    <div class="chatbox-messages" data-id="chatbox-messages" role="log" aria-live="polite">
+                    <div class="buscador-chatbox-messages" data-id="chatbox-messages" role="log" aria-live="polite">
                         ${this._messages.map((msg) => b$1`
                             <div class=${msg.wrapperClass}>
                                 ${msg.isSystem ? b$1`
-                                    <div class="msg-system">${msg.text}</div>
+                                    <div class="buscador-msg-system">${msg.text}</div>
                                 ` : msg.isUser ? b$1`
-                                    <div class="msg-bubble">
-                                        <p class="msg-bubble-text">${msg.text}</p>
+                                    <div class="buscador-msg-bubble">
+                                        <p class="buscador-msg-bubble-text">${msg.text}</p>
                                     </div>
                                 ` : b$1`
-                                    <div class="msg-col">
-                                        <div class="msg-card">
-                                            <span class="resposta-pill">
-                                                <svg class="pill-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <div class="buscador-msg-col">
+                                        <div class="buscador-msg-card">
+                                            <span class="buscador-resposta-pill">
+                                                <svg class="buscador-pill-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                                     <path d="M12 2l2.4 4.8L20 8l-4 3.9.9 5.5L12 14.8l-4.9 2.6.9-5.5L4 8l5.6-1.2L12 2z" fill="currentColor"/>
                                                 </svg>
                                                 Resposta por IA
                                             </span>
-                                            <div class="msg-card-text">${o(g.parse(msg.text))}</div>
+                                            <div class="buscador-msg-card-text">${o(g.parse(msg.text))}</div>
                                         </div>
-                                        <div class="msg-actions" role="group" aria-label="Ações da mensagem">
+                                        <div class="buscador-msg-actions" role="group" aria-label="Ações da mensagem">
                                             <button class=${msg.copyBtnClass} type="button"
                                                 @click=${() => this._handleMsgAction(msg.id, "copy")} aria-label="Copiar resposta">
                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -3467,14 +3497,14 @@ class PtBuscadorAgentforce extends i$1 {
                                             </button>
                                         </div>
                                         ${msg.showCopiedToast ? b$1`
-                                            <span class="copied-toast" aria-live="polite">Copiado para a área de transferência</span>
+                                            <span class="buscador-copied-toast" aria-live="polite">Copiado para a área de transferência</span>
                                         ` : ""}
                                         ${msg.isLastAgent && this._hasRelatedQuestions ? b$1`
-                                            <div class="related-questions">
-                                                <span class="related-label">Perguntas relacionadas</span>
-                                                <div class="related-pills" role="group" aria-label="Perguntas relacionadas">
+                                            <div class="buscador-related-questions">
+                                                <span class="buscador-related-label">Perguntas relacionadas</span>
+                                                <div class="buscador-related-pills" role="group" aria-label="Perguntas relacionadas">
                                                     ${this._relatedQuestions.map((q2) => b$1`
-                                                        <button class="related-pill" type="button"
+                                                        <button class="buscador-related-pill" type="button"
                                                             data-label=${q2.label}
                                                             @click=${this.handleRelatedQuestion}
                                                             ?disabled=${this._isLoading}>${q2.label}</button>
@@ -3487,15 +3517,15 @@ class PtBuscadorAgentforce extends i$1 {
                             </div>
                         `)}
                         ${this._isLoading ? b$1`
-                            <div class="msg-wrapper msg-wrapper--ai" role="status">
-                                <span class="generating-label" aria-label="Gerando resposta">Gerando resposta</span>
+                            <div class="buscador-msg-wrapper buscador-msg-wrapper--ai" role="status">
+                                <span class="buscador-generating-label" aria-label="Gerando resposta">Gerando resposta</span>
                             </div>
                         ` : ""}
                     </div>
 
-                    <div class="chatbox-footer">
-                        <div class="chatbox-input-wrapper">
-                            <input type="text" class="chatbox-input" data-id="chatbox-followup-input"
+                    <div class="buscador-chatbox-footer">
+                        <div class="buscador-chatbox-input-wrapper">
+                            <input type="text" class="buscador-chatbox-input" data-id="chatbox-followup-input"
                                 placeholder="Tem mais alguma dúvida?"
                                 .value=${this._followUpQuery}
                                 @input=${this.handleFollowUpInput}
@@ -3503,7 +3533,7 @@ class PtBuscadorAgentforce extends i$1 {
                                 ?disabled=${this._isLoading}
                                 aria-label="Campo de follow-up"
                             />
-                            <button class="chatbox-send-btn" data-id="chatbox-send-btn" type="button"
+                            <button class="buscador-chatbox-send-btn" data-id="chatbox-send-btn" type="button"
                                 @click=${this.handleFollowUp}
                                 ?disabled=${this.isFollowUpDisabled}
                                 aria-label="Enviar">
@@ -3514,17 +3544,17 @@ class PtBuscadorAgentforce extends i$1 {
                 ` : ""}
 
                 ${this._hasError ? b$1`
-                    <div class="error-container">
-                        <span class="error-message">${this._errorMessage}</span>
+                    <div class="buscador-error-container">
+                        <span class="buscador-chat-error">${this._errorMessage}</span>
                     </div>
                 ` : ""}
 
             </div>
         `;
   }
-}
+};
 // ─── Styles ───────────────────────────────────────────────────────────────
-__publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
+__publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
 
         /* ── Design System Tokens — UI Kit Poupatempo SP.GOV.BR ── */
         :host {
@@ -3567,7 +3597,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         *, *::before, *::after { box-sizing: border-box; }
 
         /* ── Painel principal ── */
-        .chatbox-panel {
+        .buscador-chatbox-panel {
             background: var(--color-n200);
             border-radius: var(--radius-card);
             box-shadow: var(--shadow-2);
@@ -3580,7 +3610,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         }
 
         /* ── Header ── */
-        .chatbox-header {
+        .buscador-chatbox-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -3589,13 +3619,13 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             flex-shrink: 0;
         }
 
-        .chatbox-header-left {
+        .buscador-chatbox-header-left {
             display: flex;
             align-items: center;
             gap: var(--space-1);        /* 8px */
         }
 
-        .chatbox-title {
+        .buscador-chatbox-title {
             font-size: 16.8px;          /* Input — Rawline Medium */
             font-weight: 600;
             line-height: 19.32px;
@@ -3604,7 +3634,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         }
 
         /* ── Pill "Modo IA" ── */
-        .ia-pill {
+        .buscador-ia-pill {
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -3620,16 +3650,16 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             flex-shrink: 0;
         }
 
-        .pill-icon { display: block; flex-shrink: 0; }
+        .buscador-pill-icon { display: block; flex-shrink: 0; }
 
-        .header-actions {
+        .buscador-header-actions {
             display: flex;
             align-items: center;
             gap: var(--space-1);
         }
 
         /* ── Botão fechar ── */
-        .close-btn {
+        .buscador-close-btn {
             background: var(--color-primary);
             border: none;
             border-radius: var(--radius-circle); /* 56px — Radius Circular */
@@ -3644,11 +3674,11 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             flex-shrink: 0;
         }
 
-        .close-btn:hover:not(:disabled) { opacity: 0.75; }
-        .close-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .buscador-close-btn:hover:not(:disabled) { opacity: 0.75; }
+        .buscador-close-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
         /* ── Área de mensagens ── */
-        .chatbox-messages {
+        .buscador-chatbox-messages {
             flex: 1;
             overflow-y: auto;
             display: flex;
@@ -3659,12 +3689,12 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             max-height: 480px;
         }
 
-        .msg-wrapper { display: flex; width: 100%; }
-        .msg-wrapper--user { justify-content: flex-end; }
-        .msg-wrapper--ai   { justify-content: flex-start; }
+        .buscador-msg-wrapper { display: flex; width: 100%; }
+        .buscador-msg-wrapper--user { justify-content: flex-end; }
+        .buscador-msg-wrapper--ai   { justify-content: flex-start; }
 
         /* ── Balão do usuário ── */
-        .msg-bubble {
+        .buscador-msg-bubble {
             background: var(--color-secondary);
             border-radius: var(--radius-card);
             padding: var(--space-2);    /* 16px */
@@ -3673,7 +3703,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             min-width: 0;
         }
 
-        .msg-bubble-text {
+        .buscador-msg-bubble-text {
             font-size: 16.8px;          /* Body Desktop */
             font-weight: 400;
             line-height: 19.32px;
@@ -3683,7 +3713,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         }
 
         /* ── Card de resposta IA ── */
-        .msg-col {
+        .buscador-msg-col {
             display: flex;
             flex-direction: column;
             gap: 2px;
@@ -3691,7 +3721,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             min-width: 0;
         }
 
-        .msg-card {
+        .buscador-msg-card {
             background: var(--color-secondary);
             border-radius: var(--radius-card);
             padding: var(--space-2);    /* 16px */
@@ -3702,7 +3732,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         }
 
         /* ── Pill "Resposta por IA" ── */
-        .resposta-pill {
+        .buscador-resposta-pill {
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -3718,7 +3748,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             align-self: flex-start;
         }
 
-        .msg-card-text {
+        .buscador-msg-card-text {
             font-size: 16.8px;          /* Body Desktop */
             font-weight: 400;
             line-height: 19.32px;
@@ -3727,31 +3757,31 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             overflow-wrap: anywhere;
         }
 
-        .msg-card-text p  { margin: 0 0 8px; }
-        .msg-card-text p:last-child { margin-bottom: 0; }
+        .buscador-msg-card-text p  { margin: 0 0 8px; }
+        .buscador-msg-card-text p:last-child { margin-bottom: 0; }
 
-        .msg-card-text h1,
-        .msg-card-text h2,
-        .msg-card-text h3,
-        .msg-card-text h4,
-        .msg-card-text h5,
-        .msg-card-text h6 { margin: 12px 0 4px; font-weight: 700; line-height: 1.3; }
-        .msg-card-text h1 { font-size: 1.25em; }
-        .msg-card-text h2 { font-size: 1.15em; }
-        .msg-card-text h3 { font-size: 1.05em; }
+        .buscador-msg-card-text h1,
+        .buscador-msg-card-text h2,
+        .buscador-msg-card-text h3,
+        .buscador-msg-card-text h4,
+        .buscador-msg-card-text h5,
+        .buscador-msg-card-text h6 { margin: 12px 0 4px; font-weight: 700; line-height: 1.3; }
+        .buscador-msg-card-text h1 { font-size: 1.25em; }
+        .buscador-msg-card-text h2 { font-size: 1.15em; }
+        .buscador-msg-card-text h3 { font-size: 1.05em; }
 
-        .msg-card-text ul,
-        .msg-card-text ol { margin: 4px 0 8px 20px; padding: 0; }
-        .msg-card-text li { margin-bottom: 2px; }
+        .buscador-msg-card-text ul,
+        .buscador-msg-card-text ol { margin: 4px 0 8px 20px; padding: 0; }
+        .buscador-msg-card-text li { margin-bottom: 2px; }
 
-        .msg-card-text blockquote {
+        .buscador-msg-card-text blockquote {
             margin: 8px 0;
             padding: 4px 12px;
             border-left: 3px solid var(--color-n400);
             color: var(--color-n700);
         }
 
-        .msg-card-text code {
+        .buscador-msg-card-text code {
             background: var(--color-n300);
             border-radius: 4px;
             padding: 1px 5px;
@@ -3759,7 +3789,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             font-family: monospace;
         }
 
-        .msg-card-text pre {
+        .buscador-msg-card-text pre {
             background: var(--color-n300);
             border-radius: 6px;
             padding: 10px 14px;
@@ -3767,34 +3797,34 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             margin: 8px 0;
         }
 
-        .msg-card-text pre code {
+        .buscador-msg-card-text pre code {
             background: none;
             padding: 0;
         }
 
-        .msg-card-text hr {
+        .buscador-msg-card-text hr {
             border: none;
             border-top: 1px solid var(--color-n300);
             margin: 10px 0;
         }
 
-        .msg-card-text a {
+        .buscador-msg-card-text a {
             color: var(--color-info);
             text-decoration: underline;
             word-break: break-all;
         }
 
-        .msg-card-text a:hover {
+        .buscador-msg-card-text a:hover {
             opacity: 0.8;
         }
 
         /* ── Loading shimmer ── */
-        @keyframes chatShimmer {
+        @keyframes buscador-chat-shimmer {
             0%   { background-position: -400px 0; }
             100% { background-position:  400px 0; }
         }
 
-        .generating-label {
+        .buscador-generating-label {
             font-size: 16.8px;
             font-weight: 400;
             line-height: 19.32px;
@@ -3809,17 +3839,17 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: chatShimmer 1.8s linear infinite;
+            animation: buscador-chat-shimmer 1.8s linear infinite;
             display: inline-block;
         }
 
         /* ── Footer / input ── */
-        .chatbox-footer {
+        .buscador-chatbox-footer {
             padding: var(--space-2) var(--space-4) var(--space-3); /* 16px 32px 24px */
             flex-shrink: 0;
         }
 
-        .chatbox-input-wrapper {
+        .buscador-chatbox-input-wrapper {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -3831,12 +3861,12 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .chatbox-input-wrapper:focus-within {
+        .buscador-chatbox-input-wrapper:focus-within {
             border-color: var(--color-info);
             box-shadow: 0 0 0 3px rgba(3, 78, 162, 0.12);
         }
 
-        .chatbox-input {
+        .buscador-chatbox-input {
             flex: 1;
             border: none;
             outline: none;
@@ -3849,15 +3879,15 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             min-width: 0;
         }
 
-        .chatbox-input::placeholder {
+        .buscador-chatbox-input::placeholder {
             color: var(--color-n500);
             font-style: italic;         /* Placeholder — Rawline Italic */
             font-weight: 400;
         }
 
-        .chatbox-input:disabled { opacity: 0.5; }
+        .buscador-chatbox-input:disabled { opacity: 0.5; }
 
-        .chatbox-send-btn {
+        .buscador-chatbox-send-btn {
             background: var(--color-primary);
             color: var(--color-secondary);
             border: none;
@@ -3873,13 +3903,13 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             transition: opacity 0.15s ease;
         }
 
-        .chatbox-send-btn:hover:not(:disabled) { opacity: 0.85; }
-        .chatbox-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .buscador-chatbox-send-btn:hover:not(:disabled) { opacity: 0.85; }
+        .buscador-chatbox-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
         /* ── Mensagem de sistema ── */
-        .msg-wrapper--system { justify-content: center; }
+        .buscador-msg-wrapper--system { justify-content: center; }
 
-        .msg-system {
+        .buscador-msg-system {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -3890,8 +3920,8 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             text-align: center;
         }
 
-        .msg-system::before,
-        .msg-system::after {
+        .buscador-msg-system::before,
+        .buscador-msg-system::after {
             content: '';
             flex: 1;
             height: 1px;
@@ -3899,7 +3929,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         }
 
         /* ── Erro ── */
-        .error-container {
+        .buscador-error-container {
             display: flex;
             align-items: center;
             gap: var(--space-2);        /* 16px */
@@ -3908,7 +3938,7 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             border-top: 1px solid var(--color-error);
         }
 
-        .error-message {
+        .buscador-chat-error {
             flex: 1;
             font-size: 14px;            /* Label */
             font-weight: 400;
@@ -3917,12 +3947,12 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         }
 
         /* ── Ações de mensagem ── */
-        .msg-actions {
+        .buscador-msg-actions {
             display: flex;
             gap: 2px;
         }
 
-        .action-btn {
+        .buscador-action-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -3937,40 +3967,40 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             transition: color 0.15s ease, background-color 0.15s ease;
         }
 
-        .action-btn:hover {
+        .buscador-action-btn:hover {
             color: var(--color-primary);
             background-color: rgba(0,0,0,0.06);
         }
 
-        .action-btn--active { color: var(--color-primary); }
-        .action-btn--active svg path,
-        .action-btn--active svg rect,
-        .action-btn--active svg polyline { fill: currentColor; }
+        .buscador-action-btn--active { color: var(--color-primary); }
+        .buscador-action-btn--active svg path,
+        .buscador-action-btn--active svg rect,
+        .buscador-action-btn--active svg polyline { fill: currentColor; }
 
         /* ── Toast "Copiado" ── */
-        @keyframes toastLifecycle {
+        @keyframes buscador-toast-lifecycle {
             0%   { opacity: 0; }
             8%   { opacity: 1; }
             75%  { opacity: 1; }
             100% { opacity: 0; }
         }
 
-        .copied-toast {
+        .buscador-copied-toast {
             font-size: 12px;
             color: var(--color-n700);
             padding-left: 4px;
-            animation: toastLifecycle 3s ease forwards;
+            animation: buscador-toast-lifecycle 3s ease forwards;
         }
 
         /* ── Perguntas relacionadas ── */
-        .related-questions {
+        .buscador-related-questions {
             display: flex;
             flex-direction: column;
             gap: 8px;
             margin-top: 4px;
         }
 
-        .related-label {
+        .buscador-related-label {
             font-size: 12px;
             font-weight: 600;
             color: var(--color-n600);
@@ -3978,13 +4008,13 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             letter-spacing: 0.04em;
         }
 
-        .related-pills {
+        .buscador-related-pills {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
         }
 
-        .related-pill {
+        .buscador-related-pill {
             display: inline-flex;
             align-items: center;
             padding: 6px 14px;
@@ -4000,54 +4030,54 @@ __publicField(PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             line-height: 1.4;
         }
 
-        .related-pill:hover:not(:disabled) {
+        .buscador-related-pill:hover:not(:disabled) {
             background: var(--color-primary);
             color: var(--color-secondary);
             border-color: var(--color-primary);
         }
 
-        .related-pill:disabled { opacity: 0.5; cursor: not-allowed; }
+        .buscador-related-pill:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* ── Scrollbar ── */
-        .chatbox-messages::-webkit-scrollbar { width: 6px; }
-        .chatbox-messages::-webkit-scrollbar-track { background: transparent; }
-        .chatbox-messages::-webkit-scrollbar-thumb { background: var(--color-n400); border-radius: 3px; }
-        .chatbox-messages::-webkit-scrollbar-thumb:hover { background: var(--color-n500); }
+        .buscador-chatbox-messages::-webkit-scrollbar { width: 6px; }
+        .buscador-chatbox-messages::-webkit-scrollbar-track { background: transparent; }
+        .buscador-chatbox-messages::-webkit-scrollbar-thumb { background: var(--color-n400); border-radius: 3px; }
+        .buscador-chatbox-messages::-webkit-scrollbar-thumb:hover { background: var(--color-n500); }
 
         /* ── Responsividade ── */
         @media (max-width: 767px) {
-            .chatbox-panel { width: calc(100% - 2 * var(--space-2)); }
+            .buscador-chatbox-panel { width: calc(100% - 2 * var(--space-2)); }
 
-            .chatbox-header {
+            .buscador-chatbox-header {
                 padding: var(--space-2) var(--space-3); /* 16px 24px */
             }
 
-            .chatbox-messages {
+            .buscador-chatbox-messages {
                 padding: var(--space-3) var(--space-3) var(--space-2);
                 gap: var(--space-3);
                 max-height: 360px;
             }
 
-            .chatbox-footer {
+            .buscador-chatbox-footer {
                 padding: var(--space-2) var(--space-3) var(--space-3);
             }
 
-            .msg-bubble,
-            .msg-col { max-width: 92%; }
+            .buscador-msg-bubble,
+            .buscador-msg-col { max-width: 92%; }
 
-            .msg-bubble-text,
-            .msg-card-text,
-            .generating-label {
+            .buscador-msg-bubble-text,
+            .buscador-msg-card-text,
+            .buscador-generating-label {
                 font-size: 14px;        /* Body Mobile */
                 line-height: 20.3px;
             }
 
-            .chatbox-input { font-size: 14px; }
-            .chatbox-send-btn { font-size: 14px; padding: var(--space-1) var(--space-2); }
+            .buscador-chatbox-input { font-size: 14px; }
+            .buscador-chatbox-send-btn { font-size: 14px; padding: var(--space-1) var(--space-2); }
         }
     `]);
 // ─── Reactive properties ──────────────────────────────────────────────────
-__publicField(PtBuscadorAgentforce, "properties", {
+__publicField(_PtBuscadorAgentforce, "properties", {
   apiBaseUrl: { attribute: "api-base-url" },
   sfInstanceUrl: { attribute: "sf-instance-url" },
   sfClientId: { attribute: "sf-client-id" },
@@ -4061,6 +4091,7 @@ __publicField(PtBuscadorAgentforce, "properties", {
   _followUpQuery: { state: true },
   _relatedQuestions: { state: true }
 });
+let PtBuscadorAgentforce = _PtBuscadorAgentforce;
 customElements.define("pt-buscador-agentforce", PtBuscadorAgentforce);
 document.addEventListener("DOMContentLoaded", () => {
   const buscador = document.getElementById("buscador");
