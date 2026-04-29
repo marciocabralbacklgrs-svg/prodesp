@@ -158,5 +158,6 @@ from django.shortcuts import render
 
 def buscador_page(request):
     return render(request, "buscador/index.html", {
-        "enable_vlibras": getattr(settings, "ENABLE_VLIBRAS", False),
+        "enable_vlibras":        getattr(settings, "ENABLE_VLIBRAS",        False),
+        "enable_acessibilidade": getattr(settings, "ENABLE_ACESSIBILIDADE", False),
     })
