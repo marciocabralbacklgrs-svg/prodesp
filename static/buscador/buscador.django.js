@@ -751,7 +751,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
 
         /* ── Título ── */
         .buscador-search-title {
-            font-size: 24.19px;          /* H4 Desktop — Rawline SemiBold */
+            font-size: 1.512rem;         /* H4 Desktop — Rawline SemiBold */
             font-weight: 600;
             line-height: 27.81px;
             color: var(--color-primary);
@@ -782,7 +782,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
             flex: 1;
             border: none;
             outline: none;
-            font-size: 16.8px;           /* Input — Rawline Medium */
+            font-size: 1.05rem;           /* Input — Rawline Medium */
             font-weight: 500;
             line-height: 19.32px;
             font-family: inherit;
@@ -821,7 +821,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
         }
 
         .buscador-frequent-label {
-            font-size: 14px;             /* Label — Rawline SemiBold */
+            font-size: 0.875rem;             /* Label — Rawline SemiBold */
             font-weight: 600;
             line-height: 20.3px;
             color: var(--color-n700);
@@ -838,7 +838,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
             border: 1.5px solid var(--color-primary);
             border-radius: var(--radius-pill);
             padding: 4px var(--space-2); /* 4px 16px */
-            font-size: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
             font-family: inherit;
             color: var(--color-primary);
@@ -858,14 +858,14 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
                 padding: var(--space-5) var(--space-2) var(--space-3);
             }
             .buscador-search-title {
-                font-size: 20.16px;      /* H3 Mobile */
+                font-size: 1.26rem;      /* H3 Mobile */
                 line-height: 23.18px;
             }
             .buscador-search-bar {
                 padding: var(--space-2) var(--space-2);
             }
             .buscador-search-input {
-                font-size: 14px;         /* Body Mobile */
+                font-size: 0.875rem;         /* Body Mobile */
                 line-height: 20.3px;
             }
         }
@@ -1392,7 +1392,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         .buscador-loading-text {
-            font-size: 16.8px;
+            font-size: 1.05rem;
             font-weight: 400;
             line-height: 19.32px;
             font-family: inherit;
@@ -1411,7 +1411,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
 
         .buscador-loading-dots::after {
             content: '...';
-            font-size: 16.8px;
+            font-size: 1.05rem;
             background: linear-gradient(
                 90deg,
                 var(--color-n600) 0%,
@@ -1462,7 +1462,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         .buscador-feedback-question {
-            font-size: 16.8px;          /* Body Desktop */
+            font-size: 1.05rem;          /* Body Desktop */
             font-weight: 400;
             line-height: 19.32px;
             color: var(--color-primary);
@@ -1480,7 +1480,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             align-items: center;
             gap: 6px;
             padding: var(--space-1) 20px;
-            font-size: 15px;
+            font-size: 0.9375rem;
             font-weight: 700;
             font-family: inherit;
             border-radius: var(--radius-pill);
@@ -1512,7 +1512,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            font-size: 11px;
+            font-size: 0.6875rem;
             font-weight: 600;
             letter-spacing: 0.04em;
             text-transform: uppercase;
@@ -1557,7 +1557,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
 
         /* ── Contagem ── */
         .buscador-results-count {
-            font-size: 16.8px;          /* Body Desktop */
+            font-size: 1.05rem;          /* Body Desktop */
             line-height: 19.32px;
             color: var(--color-n900);
         }
@@ -1567,7 +1567,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
 
         /* ── Sem resultados ── */
         .buscador-no-results-message {
-            font-size: 16.8px;
+            font-size: 1.05rem;
             font-weight: 400;
             line-height: 19.32px;
             color: var(--color-n700);
@@ -1578,7 +1578,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
 
         /* ── Erro de API ── */
         .buscador-search-error {
-            font-size: 16.8px;
+            font-size: 1.05rem;
             font-weight: 400;
             line-height: 19.32px;
             color: var(--color-error);
@@ -1617,7 +1617,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         .buscador-service-title {
-            font-size: 20.16px;         /* H5 Desktop — Rawline Bold */
+            font-size: 1.26rem;         /* H5 Desktop — Rawline Bold */
             font-weight: 700;
             line-height: 23.18px;
             color: var(--color-primary);
@@ -1627,7 +1627,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         .buscador-service-desc {
-            font-size: 14px;
+            font-size: 0.875rem;
             font-weight: 400;
             line-height: 20px;
             color: var(--color-n900);
@@ -1640,7 +1640,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             gap: var(--space-1);        /* 8px */
             flex-wrap: wrap;
             margin-top: 4px;
-            font-size: 14px;
+            font-size: 0.875rem;
             color: var(--color-primary);
         }
 
@@ -1648,7 +1648,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             display: inline-block;
             background: var(--color-primary);
             color: var(--color-secondary);
-            font-size: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
             padding: 2px var(--space-1); /* 2px 8px */
             border-radius: var(--radius-card);
@@ -1684,7 +1684,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             width: 36px;
             height: 36px;
             border-radius: var(--radius-pill);
-            font-size: 14px;             /* Label */
+            font-size: 0.875rem;             /* Label */
             font-weight: 600;
             line-height: 20.3px;
             font-family: inherit;
@@ -1721,7 +1721,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             justify-content: center;
             width: 36px;
             height: 36px;
-            font-size: 14px;
+            font-size: 0.875rem;
             color: var(--color-n600);
             user-select: none;
         }
@@ -1761,7 +1761,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             }
 
             .buscador-feedback-question {
-                font-size: 18px;
+                font-size: 1.125rem;
                 font-weight: 500;
                 line-height: 26px;
             }
@@ -1778,11 +1778,11 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
                 width: 100%;
                 justify-content: center;
                 padding: 14px var(--space-3);
-                font-size: 15px;
+                font-size: 0.9375rem;
             }
 
             .buscador-service-title {
-                font-size: 16.8px;      /* H4 Mobile */
+                font-size: 1.05rem;      /* H4 Mobile */
                 line-height: 19.32px;
             }
 
@@ -1790,7 +1790,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             .buscador-results-count,
             .buscador-no-results-message,
             .buscador-search-error {
-                font-size: 14px;        /* Body Mobile */
+                font-size: 0.875rem;        /* Body Mobile */
                 line-height: 20.3px;
             }
 
@@ -3626,7 +3626,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         }
 
         .buscador-chatbox-title {
-            font-size: 16.8px;          /* Input — Rawline Medium */
+            font-size: 1.05rem;          /* Input — Rawline Medium */
             font-weight: 600;
             line-height: 19.32px;
             color: var(--color-primary);
@@ -3642,7 +3642,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             border: 1px solid var(--color-n400);
             border-radius: var(--radius-pill);
             padding: 2px var(--space-1); /* 2px 8px */
-            font-size: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--color-primary);
             line-height: 20px;
@@ -3704,7 +3704,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         }
 
         .buscador-msg-bubble-text {
-            font-size: 16.8px;          /* Body Desktop */
+            font-size: 1.05rem;          /* Body Desktop */
             font-weight: 400;
             line-height: 19.32px;
             color: var(--color-n900);
@@ -3740,7 +3740,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             border: 1px solid var(--color-info);    /* Cor Informação */
             border-radius: var(--radius-pill);
             padding: 2px var(--space-1);            /* 2px 8px */
-            font-size: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--color-info);               /* Cor Informação */
             line-height: 20px;
@@ -3749,7 +3749,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         }
 
         .buscador-msg-card-text {
-            font-size: 16.8px;          /* Body Desktop */
+            font-size: 1.05rem;          /* Body Desktop */
             font-weight: 400;
             line-height: 19.32px;
             color: var(--color-n800);
@@ -3825,7 +3825,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         }
 
         .buscador-generating-label {
-            font-size: 16.8px;
+            font-size: 1.05rem;
             font-weight: 400;
             line-height: 19.32px;
             font-family: inherit;
@@ -3870,7 +3870,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             flex: 1;
             border: none;
             outline: none;
-            font-size: 16.8px;          /* Input — Rawline Medium */
+            font-size: 1.05rem;          /* Input — Rawline Medium */
             font-weight: 500;
             line-height: 19.32px;
             font-family: inherit;
@@ -3893,7 +3893,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             border: none;
             border-radius: var(--radius-pill);
             padding: var(--space-1) var(--space-3); /* 8px 24px */
-            font-size: 16.8px;
+            font-size: 1.05rem;
             font-weight: 600;
             line-height: 20px;
             font-family: inherit;
@@ -3914,7 +3914,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             align-items: center;
             gap: 8px;
             width: 100%;
-            font-size: 12px;
+            font-size: 0.75rem;
             color: var(--color-n600);
             font-style: italic;
             text-align: center;
@@ -3940,7 +3940,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
 
         .buscador-chat-error {
             flex: 1;
-            font-size: 14px;            /* Label */
+            font-size: 0.875rem;            /* Label */
             font-weight: 400;
             line-height: 20.3px;
             color: var(--color-error);  /* Cor Erro */
@@ -3986,7 +3986,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         }
 
         .buscador-copied-toast {
-            font-size: 12px;
+            font-size: 0.75rem;
             color: var(--color-n700);
             padding-left: 4px;
             animation: buscador-toast-lifecycle 3s ease forwards;
@@ -4001,7 +4001,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         }
 
         .buscador-related-label {
-            font-size: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--color-n600);
             text-transform: uppercase;
@@ -4018,7 +4018,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             display: inline-flex;
             align-items: center;
             padding: 6px 14px;
-            font-size: 13px;
+            font-size: 0.8125rem;
             font-weight: 500;
             font-family: inherit;
             color: var(--color-primary);
@@ -4068,12 +4068,12 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             .buscador-msg-bubble-text,
             .buscador-msg-card-text,
             .buscador-generating-label {
-                font-size: 14px;        /* Body Mobile */
+                font-size: 0.875rem;        /* Body Mobile */
                 line-height: 20.3px;
             }
 
-            .buscador-chatbox-input { font-size: 14px; }
-            .buscador-chatbox-send-btn { font-size: 14px; padding: var(--space-1) var(--space-2); }
+            .buscador-chatbox-input { font-size: 0.875rem; }
+            .buscador-chatbox-send-btn { font-size: 0.875rem; padding: var(--space-1) var(--space-2); }
         }
     `]);
 // ─── Reactive properties ──────────────────────────────────────────────────
