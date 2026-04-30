@@ -1333,6 +1333,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             --shadow-2: 0 3px 3px 0 rgba(0,0,0,.15), 0 1px 5px 0 rgba(0,0,0,.30);
             /* Espaçamento (base 8px) */
             --space-1: 8px;
+            --space-1.5: 10px;
             --space-2: 16px;
             --space-3: 24px;
             --space-4: 32px;
@@ -1427,7 +1428,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         .buscador-search-results {
             display: flex;
             flex-direction: column;
-            gap: var(--space-3);        /* 24px */
+            gap: var(--space-1);        /* 24px */
             width: 100%;
         }
 
@@ -1579,7 +1580,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             display: flex;
             align-items: center;
             gap: var(--space-2);
-            padding: var(--space-2) var(--space-3) var(--space-3) var(--space-2);
+            padding: var(--space-2) var(--space-1.5) var(--space-1.5) var(--space-2);
             border-bottom: 1px solid var(--color-n300);
         }
 
@@ -1610,6 +1611,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             font-weight: 400;
             line-height: 17.07px;
             padding-top: 20px;
+            margin: 0px;
         }
 
         .buscador-service-tags {
