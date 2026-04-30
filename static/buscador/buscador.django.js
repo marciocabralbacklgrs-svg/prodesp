@@ -3064,7 +3064,7 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
     this._searchTermValue = value || "";
     this.requestUpdate("searchTerm", old);
     if ((value == null ? void 0 : value.trim()) && value !== old) {
-      const query = value.trim();
+      const query = this._formatSensitiveData(value.trim());
       this._searchQuery = query;
       this._hasStartedConversation = true;
       this._addMessage(query, "user");
@@ -3105,7 +3105,7 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
   }
   async handleFollowUp() {
     if (this.isFollowUpDisabled) return;
-    const query = this._followUpQuery.trim();
+    const query = this._formatSensitiveData(this._followUpQuery.trim());
     this._clearError();
     this._isLoading = true;
     try {
@@ -3317,6 +3317,24 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
     this._sequenceId = 1;
     this._msgCounter = 0;
     this._hasStartedConversation = false;
+  }
+  _formatSensitiveData(term) {
+    if (!term) return term;
+    const digits = term.replace(/[^0-9]/g, "");
+    const withX  = term.replace(/[^0-9xX]/g, "").toUpperCase();
+    const isRepeated = (v) => {
+      if (!v) return false;
+      const first = v[0];
+      const removed = v.replace(new RegExp(first, "g"), "");
+      return v[v.length - 1] !== "X" ? removed.length === 0 : removed.length === 1;
+    };
+    const mask = (v) => v.substring(0, 3) + "*******";
+    if (digits.length === 11 && !isRepeated(digits)) return mask(digits);
+    if (digits.length === 14 && !isRepeated(digits)) return mask(digits);
+    if (withX.length >= 8 && withX.length <= 9 && !isRepeated(withX)) return mask(withX);
+    if (digits.length >= 8 && digits.length <= 9 && !isRepeated(digits)) return mask(digits);
+    if (digits.length === 10 && !isRepeated(digits)) return mask(digits);
+    return term;
   }
   _clearError() {
     this._hasError = false;
