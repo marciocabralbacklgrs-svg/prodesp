@@ -1291,7 +1291,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                                     </button>
                                     <button class="buscador-btn-feedback buscador-btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
                                         ${this._starSvgMobile}
-                                        Não, pesquisar com IA
+                                        Não encontrei
                                     </button>
                                 </div>
                             </div>
