@@ -1612,7 +1612,6 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             line-height: 28.77px;
         }
 
-        .buscador-service-title:hover { color: var(--color-info); }
 
         .buscador-service-desc {
             font-size: 14px;
@@ -3485,7 +3484,7 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
                                             </button>
                                         </div>
                                         ${msg.showCopiedToast ? b$1`
-                                            <span class="buscador-copied-toast" aria-live="polite">Copiado para a área de transferência</span>
+                                            <span class="buscador-copied-toast" aria-live="polite">Copiado</span>
                                         ` : ""}
                                         ${msg.isLastAgent && this._hasRelatedQuestions ? b$1`
                                             <div class="buscador-related-questions">
@@ -3969,17 +3968,27 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
 
         /* ── Toast "Copiado" ── */
         @keyframes buscador-toast-lifecycle {
-            0%   { opacity: 0; }
-            8%   { opacity: 1; }
-            75%  { opacity: 1; }
-            100% { opacity: 0; }
+            0%   { opacity: 0; transform: translateY(4px) translateX(-50%); }
+            10%  { opacity: 1; transform: translateY(0) translateX(-50%); }
+            75%  { opacity: 1; transform: translateY(0) translateX(-50%); }
+            100% { opacity: 0; transform: translateY(0) translateX(-50%); }
         }
 
         .buscador-copied-toast {
-            font-size: 0.75rem;
-            color: var(--color-n700);
-            padding-left: 4px;
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #323232;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 400;
+            padding: 10px 16px;
+            border-radius: 4px;
+            white-space: nowrap;
+            pointer-events: none;
             animation: buscador-toast-lifecycle 3s ease forwards;
+            z-index: 9999;
         }
 
         /* ── Perguntas relacionadas ── */
