@@ -1615,15 +1615,15 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             font-weight: 400;
             color: var(--color-primary);
             margin: 0;
-            font-family: Rawline;
-            text-decoration: underline;
+            font-family: inherit;
+            text-decoration: none !important;
             line-height: 28.77px;
         }
 
         .buscador-service-desc {
             font-family: Montserrat;
             font-size: 14px;
-            font-weight: 400;
+            font-weight: 700;
             line-height: 17.07px;
             padding-top: 20px;
         }
@@ -3253,10 +3253,10 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
         (_a2 = navigator.clipboard) == null ? void 0 : _a2.writeText(msg.text);
         m2.actionCopied = true;
         m2.showCopiedToast = true;
-        m2.copyBtnClass = cls(true);
+        m2.copyBtnClass = "buscador-action-btn buscador-action-btn--copied";
         this._pendingTimers.push(setTimeout(() => {
           this._messages = this._messages.map(
-            (m22) => m22.id !== msgId ? m22 : { ...m22, actionCopied: false, showCopiedToast: false, copyBtnClass: cls(false) }
+            (m22) => m22.id !== msgId ? m22 : { ...m22, actionCopied: false, showCopiedToast: false, copyBtnClass: "buscador-action-btn" }
           );
         }, 3e3));
       } else if (action === "like") {
@@ -3956,7 +3956,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             height: 30px;
             border: none;
             background: transparent;
-            color: var(--color-n400);
+            color: #000;
             cursor: pointer;
             border-radius: var(--radius-card);
             padding: 0;
@@ -3972,6 +3972,8 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
         .buscador-action-btn--active svg path,
         .buscador-action-btn--active svg rect,
         .buscador-action-btn--active svg polyline { fill: currentColor; }
+
+        .buscador-action-btn--copied { color: var(--color-primary); }
 
         /* ── Toast "Copiado" ── */
         @keyframes buscador-toast-lifecycle {
