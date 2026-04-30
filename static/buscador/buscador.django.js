@@ -1625,16 +1625,14 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         .buscador-service-desc {
-            font-family: Montserrat;
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 400;
             line-height: 17.07px;
             padding-top: 20px;
         }
 
         .buscador-service-tags {
             color: var(--color-primary);
-            font-family: Montserrat;
             font-size: 14px;
             font-weight: 400;
             line-height: 17.07px;
@@ -1649,11 +1647,11 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             margin-left: 6px;
             padding: 4px 8px;
             border-radius: 4px;
-            font-family: Montserrat;
             font-size: 10px;
             font-weight: 600;
             line-height: 12.19px;
             text-align: center;
+            text-transform: none;
         }
 
         .buscador-service-card-chevron {
