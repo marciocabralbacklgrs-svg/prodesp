@@ -1209,7 +1209,6 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                         <div class="buscador-results-count" data-id="results-count" aria-live="polite">
                             <strong class="buscador-results-number">0 resultados</strong>
                             <span class="buscador-results-suffix"> encontrados</span>
-                            ${this._origem ? b$1`<span class="buscador-origem-badge">${this._origem}</span>` : ""}
                         </div>
                         <p class="buscador-no-results-message" data-id="no-results-message">Nenhum resultado encontrado para a sua busca. Tente outros termos ou explore os serviços disponíveis.</p>
 
@@ -1233,26 +1232,20 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                         <div class="buscador-results-count" data-id="results-count" aria-live="polite">
                             <strong class="buscador-results-number">${this._totalResults} resultados</strong>
                             <span class="buscador-results-suffix"> encontrados</span>
-                            ${this._origem ? b$1`<span class="buscador-origem-badge">${this._origem}</span>` : ""}
                         </div>
 
                         <div class="buscador-service-list" data-id="service-list" role="list">
                             ${this._displayedResults.map((s2) => b$1`
-                                <a class="buscador-service-card" data-id="service-card" role="listitem" href=${s2.link} target="_blank" rel="noopener noreferrer">
+                                <div class="buscador-service-card" data-id="service-card" role="listitem">
                                     <div class="buscador-service-card-content">
-                                        <h3 class="buscador-service-title" data-id="service-title">${s2.title}</h3>
+                                        <a class="buscador-service-title" data-id="service-title" href=${s2.link} target="_blank" rel="noopener">${s2.title}</a>
                                         <p class="buscador-service-desc">Órgão Responsável: <strong>${s2.orgao}</strong></p>
                                         <div class="buscador-service-tags">
                                             Serviço
                                             ${s2.tags.map((tag) => b$1`<span class="buscador-service-tag">${tag}</span>`)}
                                         </div>
                                     </div>
-                                    <div class="buscador-service-card-chevron" aria-hidden="true">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <polyline points="9 18 15 12 9 6"/>
-                                        </svg>
-                                    </div>
-                                </a>
+                                </div>
                             `)}
                         </div>
 
@@ -1593,17 +1586,11 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         .buscador-service-card {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: var(--space-2);        /* 16px */
-            padding: var(--space-2) var(--space-3) var(--space-3) var(--space-2); /* 16px 24px 24px 16px */
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3) var(--space-3) var(--space-2);
             border-bottom: 1px solid var(--color-n300);
-            cursor: pointer;
-            transition: background-color 0.15s ease;
-            text-decoration: none;
-            color: inherit;
         }
 
-        .buscador-service-card:hover { background-color: transparent; }
         .buscador-service-card:first-child { border-top: 1px solid var(--color-n300); }
 
         .buscador-service-card-content {
@@ -1615,14 +1602,17 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         .buscador-service-title {
+            display: block;
             font-size: 24px;
             font-weight: 400;
             color: var(--color-primary);
             margin: 0;
             font-family: inherit;
-            text-decoration: none !important;
+            text-decoration: underline;
             line-height: 28.77px;
         }
+
+        .buscador-service-title:hover { color: var(--color-info); }
 
         .buscador-service-desc {
             font-size: 14px;
