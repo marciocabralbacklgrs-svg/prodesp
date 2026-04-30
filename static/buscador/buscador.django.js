@@ -1,4 +1,4 @@
-var __defProp = Object.defineProperty;
+﻿var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 /**
@@ -597,11 +597,7 @@ function injectStyles(tag, styles) {
   document.head.appendChild(el);
 }
 const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
-  // --- Light DOM ------------------------------------------------------------
-  createRenderRoot() {
-    return this;
-  }
-  connectedCallback() {
+    connectedCallback() {
     super.connectedCallback();
     injectStyles("pt-buscador-campo", _PtBuscadorCampo.styles);
   }
@@ -905,11 +901,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     this._simEncontreiFeedback = false;
     this._origem = "";
   }
-  // --- Light DOM ------------------------------------------------------------
-  createRenderRoot() {
-    return this;
-  }
-  connectedCallback() {
+    connectedCallback() {
     super.connectedCallback();
     injectStyles("pt-buscador-indice-pesquisa", _PtBuscadorIndicePesquisa.styles);
   }
@@ -3051,11 +3043,7 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
     this._relatedQuestions = [];
     this._showCopiedToast = false;
   }
-  // ─── Light DOM ────────────────────────────────────────────────────────────
-  createRenderRoot() {
-    return this;
-  }
-  connectedCallback() {
+    connectedCallback() {
     super.connectedCallback();
     injectStyles("pt-buscador-agentforce", _PtBuscadorAgentforce.styles);
   }
