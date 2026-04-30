@@ -597,7 +597,7 @@ function injectStyles(tag, styles) {
   document.head.appendChild(el);
 }
 const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
-  // ─── Light DOM ────────────────────────────────────────────────────────────
+  // --- Light DOM ------------------------------------------------------------
   createRenderRoot() {
     return this;
   }
@@ -612,7 +612,7 @@ const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
     this.frequentSearches = ["Novo RG", "Renovar CNH", "Pagar o IPVA do carro"];
     this._inputValue = "";
   }
-  // ─── Public API ───────────────────────────────────────────────────────────
+  // --- Public API -----------------------------------------------------------
   get value() {
     return this._inputValue;
   }
@@ -621,7 +621,7 @@ const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
     const input = this.querySelector(".buscador-search-input");
     if (input) input.value = this._inputValue;
   }
-  // ─── Handlers ─────────────────────────────────────────────────────────────
+  // --- Handlers -------------------------------------------------------------
   _handleInput(e2) {
     this._inputValue = e2.target.value;
   }
@@ -635,7 +635,7 @@ const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
     if (input) input.value = label;
     this._doSearch();
   }
-  // ─── Private ──────────────────────────────────────────────────────────────
+  // --- Private --------------------------------------------------------------
   _doSearch() {
     const term = this._inputValue.trim();
     if (!term) return;
@@ -645,7 +645,7 @@ const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
       detail: { term }
     }));
   }
-  // ─── Template ─────────────────────────────────────────────────────────────
+  // --- Template -------------------------------------------------------------
   render() {
     var _a2;
     return b$1`
@@ -692,10 +692,10 @@ const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
         `;
   }
 };
-// ─── Styles ───────────────────────────────────────────────────────────────
+// --- Styles ---------------------------------------------------------------
 __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
 
-        /* ── Design System Tokens — UI Kit Poupatempo SP.GOV.BR ── */
+        /* -- Design System Tokens — UI Kit Poupatempo SP.GOV.BR -- */
         :host {
             /* Cores */
             --color-primary:    #000000;
@@ -749,7 +749,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
             align-items: center;
         }
 
-        /* ── Título ── */
+        /* -- Título -- */
         .buscador-search-title {
             font-size: 1.512rem;         /* H4 Desktop — Rawline SemiBold */
             font-weight: 600;
@@ -760,7 +760,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
             font-family: inherit;
         }
 
-        /* ── Barra de busca ── */
+        /* -- Barra de busca -- */
         .buscador-search-bar {
             display: flex;
             align-items: center;
@@ -812,7 +812,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
 
         .buscador-search-btn:hover { color: var(--color-info); }
 
-        /* ── Buscas frequentes ── */
+        /* -- Buscas frequentes -- */
         .buscador-frequent-searches {
             display: flex;
             flex-direction: column;
@@ -852,7 +852,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
             color: var(--color-secondary);
         }
 
-        /* ── Responsividade ── */
+        /* -- Responsividade -- */
         @media (max-width: 767px) {
             .buscador-search-section {
                 padding: var(--space-5) var(--space-2) var(--space-3);
@@ -870,7 +870,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
             }
         }
     `]);
-// ─── Properties ──────────────────────────────────────────────────────────
+// --- Properties ----------------------------------------------------------
 __publicField(_PtBuscadorCampo, "properties", {
   title: { type: String },
   placeholder: { type: String },
@@ -882,7 +882,7 @@ const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 const MIN_SEARCH_LENGTH = 2;
 const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
-  // ─── Constructor ──────────────────────────────────────────────────────────
+  // --- Constructor ----------------------------------------------------------
   constructor() {
     super();
     __publicField(this, "_searchTermValue", "");
@@ -905,7 +905,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     this._simEncontreiFeedback = false;
     this._origem = "";
   }
-  // ─── Light DOM ────────────────────────────────────────────────────────────
+  // --- Light DOM ------------------------------------------------------------
   createRenderRoot() {
     return this;
   }
@@ -949,7 +949,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     if (!anchor) return 0;
     return Math.round(anchor.getBoundingClientRect().top - this.getBoundingClientRect().top);
   }
-  // ─── Lifecycle ────────────────────────────────────────────────────────────
+  // --- Lifecycle ------------------------------------------------------------
   disconnectedCallback() {
     var _a2;
     super.disconnectedCallback();
@@ -960,7 +960,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     (_a2 = this._abortController) == null ? void 0 : _a2.abort();
     this._inFlightTerm = "";
   }
-  // ─── Computed ─────────────────────────────────────────────────────────────
+  // --- Computed -------------------------------------------------------------
   get _hasResults() {
     return this._hasSearched && !this._isLoading && this._results.length > 0;
   }
@@ -1016,7 +1016,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     const isActive = num === current;
     return { key: String(num), label: String(num), page: num, isEllipsis: false, btnClass: isActive ? "buscador-page-btn buscador-page-btn--active" : "buscador-page-btn" };
   }
-  // ─── Event handlers ───────────────────────────────────────────────────────
+  // --- Event handlers -------------------------------------------------------
   handleSimEncontrei() {
     this._isMobileSheetExpanded = false;
     this._simEncontreiFeedback = true;
@@ -1066,7 +1066,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
       this._scrollToResults();
     }
   }
-  // ─── Private helpers ──────────────────────────────────────────────────────
+  // --- Private helpers ------------------------------------------------------
   _doSearch() {
     var _a2;
     const term = this._searchTermValue.trim();
@@ -1148,7 +1148,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     });
     return { results, origem };
   }
-  // ─── SVG helpers ──────────────────────────────────────────────────────────
+  // --- SVG helpers ----------------------------------------------------------
   get _thumbsUpSvg() {
     return b$1`
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1156,19 +1156,14 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                 <path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/>
             </svg>`;
   }
-  get _starSvgDesktop() {
+  get _thumbsDownSvg() {
     return b$1`
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                <path d="M8 1L10.5 5.5 15 8 10.5 10.5 8 15 5.5 10.5 1 8 5.5 5.5Z"/>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z"/>
+                <path d="M17 2h2.67A2.31 2.31 0 0122 4v7a2.31 2.31 0 01-2.33 2H17"/>
             </svg>`;
   }
-  get _starSvgMobile() {
-    return b$1`
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                <path d="M8 1L10.5 5.5 15 8 10.5 10.5 8 15 5.5 10.5 1 8 5.5 5.5Z"/>
-            </svg>`;
-  }
-  // ─── Template ─────────────────────────────────────────────────────────────
+  // --- Template -------------------------------------------------------------
   render() {
     return b$1`
             <div class="buscador-wrapper">
@@ -1202,7 +1197,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                                 </button>
                                 <button class="buscador-btn-feedback buscador-btn-feedback--filled" data-id="btn-nao-encontrei" type="button" @click=${this.handleNaoEncontrei}>
                                     Não encontrei
-                                    ${this._starSvgDesktop}
+                                    ${this._thumbsDownSvg}
                                 </button>
                             </div>
                         </div>
@@ -1212,7 +1207,6 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                             ${this._origem ? b$1`<span class="buscador-origem-badge">${this._origem}</span>` : ""}
                         </div>
                         <p class="buscador-no-results-message" data-id="no-results-message">Nenhum resultado encontrado para a sua busca. Tente outros termos ou explore os serviços disponíveis.</p>
-                    </div>
 
                 ` : this._hasResults ? b$1`
                     <div class="buscador-search-results" data-results-anchor data-id="results-container">
@@ -1225,8 +1219,8 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                                     Sim, encontrei
                                 </button>
                                 <button class="buscador-btn-feedback buscador-btn-feedback--filled" data-id="btn-nao-encontrei" type="button" @click=${this.handleNaoEncontrei}>
+                                    ${this._thumbsDownSvg}
                                     Não encontrei
-                                    ${this._starSvgDesktop}
                                 </button>
                             </div>
                         </div>
@@ -1306,8 +1300,8 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                                         Sim, encontrei
                                     </button>
                                     <button class="buscador-btn-feedback buscador-btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
+                                        ${this._thumbsDownSvg}
                                         Não, pesquisar com IA
-                                        ${this._starSvgMobile}
                                     </button>
                                 </div>
                             </div>
@@ -1617,43 +1611,45 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         }
 
         .buscador-service-title {
-            font-size: 1.26rem;         /* H5 Desktop — Rawline Bold */
-            font-weight: 700;
-            line-height: 23.18px;
+            font-size: 24px;
+            font-weight: 400;
             color: var(--color-primary);
             margin: 0;
             font-family: inherit;
             text-decoration: none;
+            line-height: 28.77px;
         }
 
         .buscador-service-desc {
-            font-size: 0.875rem;
-            font-weight: 400;
-            line-height: 20px;
-            color: var(--color-n900);
-            margin: 14px 0 0;
+            font-family: Montserrat;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 17.07px;
+            padding-top: 20px;
         }
 
         .buscador-service-tags {
-            display: flex;
-            align-items: center;
-            gap: var(--space-1);        /* 8px */
-            flex-wrap: wrap;
-            margin-top: 4px;
-            font-size: 0.875rem;
             color: var(--color-primary);
+            font-family: Montserrat;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 17.07px;
+            text-align: left;
+            padding-top: 4px;
         }
 
         .buscador-service-tag {
             display: inline-block;
             background: var(--color-primary);
             color: var(--color-secondary);
-            font-size: 0.75rem;
+            margin-left: 6px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: Montserrat;
+            font-size: 10px;
             font-weight: 600;
-            padding: 2px var(--space-1); /* 2px 8px */
-            border-radius: var(--radius-card);
-            line-height: 1.6;
-            white-space: nowrap;
+            line-height: 12.19px;
+            text-align: center;
         }
 
         .buscador-service-card-chevron {
@@ -1726,7 +1722,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             user-select: none;
         }
 
-        /* ── Responsividade ── */
+        /* -- Responsividade -- */
         @media (max-width: 767px) {
             :host { padding: 0 var(--space-2); }
             .buscador-wrapper { padding: var(--space-5) var(--space-2) var(--space-3); }
@@ -1782,15 +1778,15 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             }
 
             .buscador-service-title {
-                font-size: 1.05rem;      /* H4 Mobile */
-                line-height: 19.32px;
+                font-size: 20px;
+                line-height: 24px;
             }
 
             .buscador-service-desc,
             .buscador-results-count,
             .buscador-no-results-message,
             .buscador-search-error {
-                font-size: 0.875rem;        /* Body Mobile */
+                font-size: 14px;
                 line-height: 20.3px;
             }
 
@@ -1799,7 +1795,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             }
         }
     `]);
-// ─── Reactive properties ──────────────────────────────────────────────────
+// --- Reactive properties --------------------------------------------------
 __publicField(_PtBuscadorIndicePesquisa, "properties", {
   searchApiUrl: { attribute: "search-api-url" },
   orquestradorApiUrl: { attribute: "orquestrador-api-url" },
