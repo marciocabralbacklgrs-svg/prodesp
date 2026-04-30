@@ -1615,15 +1615,15 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             font-weight: 400;
             color: var(--color-primary);
             margin: 0;
-            font-family: inherit;
-            text-decoration: none;
+            font-family: Rawline;
+            text-decoration: underline;
             line-height: 28.77px;
         }
 
         .buscador-service-desc {
             font-family: Montserrat;
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 400;
             line-height: 17.07px;
             padding-top: 20px;
         }
@@ -3029,7 +3029,7 @@ g.walkTokens;
 g.parseInline;
 b.parse;
 x.lex;
-const FETCH_TIMEOUT_MS = 45e3;
+const FETCH_TIMEOUT_MS = 30e3;
 const FEEDBACK_MAP = { like: "GOOD", dislike: "BAD" };
 const SHARE_SUBJECT = "Resposta do Assistente Poupatempo";
 const _mdRenderer = new g.Renderer();
