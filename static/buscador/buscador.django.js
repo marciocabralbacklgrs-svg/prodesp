@@ -3049,6 +3049,7 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
     this._hasStartedConversation = false;
     this._followUpQuery = "";
     this._relatedQuestions = [];
+    this._showCopiedToast = false;
   }
   // ─── Light DOM ────────────────────────────────────────────────────────────
   createRenderRoot() {
@@ -3242,13 +3243,13 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
       const m2 = { ...msg };
       if (action === "copy") {
         (_a2 = navigator.clipboard) == null ? void 0 : _a2.writeText(msg.text);
-        m2.actionCopied = true;
-        m2.showCopiedToast = true;
         m2.copyBtnClass = "buscador-action-btn buscador-action-btn--copied";
+        this._showCopiedToast = true;
         this._pendingTimers.push(setTimeout(() => {
           this._messages = this._messages.map(
-            (m22) => m22.id !== msgId ? m22 : { ...m22, actionCopied: false, showCopiedToast: false, copyBtnClass: "buscador-action-btn" }
+            (m22) => m22.id !== msgId ? m22 : { ...m22, copyBtnClass: "buscador-action-btn" }
           );
+          this._showCopiedToast = false;
         }, 3e3));
       } else if (action === "like") {
         m2.actionLiked = !msg.actionLiked;
@@ -3455,7 +3456,10 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
                                         <div class="buscador-msg-actions" role="group" aria-label="Ações da mensagem">
                                             <button class=${msg.copyBtnClass} type="button"
                                                 @click=${() => this._handleMsgAction(msg.id, "copy")} aria-label="Copiar resposta">
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <svg class="icon-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                    <polyline points="20 6 9 17 4 12"/>
+                                                </svg>
+                                                <svg class="icon-copy" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                                     <rect x="9" y="9" width="13" height="13" rx="2"/>
                                                     <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
                                                 </svg>
@@ -3483,9 +3487,6 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
                                                 </svg>
                                             </button>
                                         </div>
-                                        ${msg.showCopiedToast ? b$1`
-                                            <span class="buscador-copied-toast" aria-live="polite">Copiado</span>
-                                        ` : ""}
                                         ${msg.isLastAgent && this._hasRelatedQuestions ? b$1`
                                             <div class="buscador-related-questions">
                                                 <span class="buscador-related-label">Perguntas relacionadas</span>
@@ -3534,6 +3535,10 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
                     <div class="buscador-error-container">
                         <span class="buscador-chat-error">${this._errorMessage}</span>
                     </div>
+                ` : ""}
+
+                ${this._showCopiedToast ? b$1`
+                    <span class="buscador-copied-toast" aria-live="polite">Copiado</span>
                 ` : ""}
 
             </div>
@@ -3594,6 +3599,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
 
         /* ── Header ── */
@@ -3966,16 +3972,22 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
 
         .buscador-action-btn--copied { color: var(--color-primary); }
 
+        /* Ícone do botão de cópia: controle via CSS */
+        .buscador-action-btn .icon-copy  { display: block; }
+        .buscador-action-btn .icon-check { display: none;  }
+        .buscador-action-btn--copied .icon-copy  { display: none;  }
+        .buscador-action-btn--copied .icon-check { display: block; }
+
         /* ── Toast "Copiado" ── */
         @keyframes buscador-toast-lifecycle {
-            0%   { opacity: 0; transform: translateY(4px) translateX(-50%); }
-            10%  { opacity: 1; transform: translateY(0) translateX(-50%); }
-            75%  { opacity: 1; transform: translateY(0) translateX(-50%); }
-            100% { opacity: 0; transform: translateY(0) translateX(-50%); }
+            0%   { opacity: 0; transform: translateX(-50%) translateY(4px); }
+            10%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+            75%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(0); }
         }
 
         .buscador-copied-toast {
-            position: fixed;
+            position: absolute;
             bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
@@ -4088,7 +4100,8 @@ __publicField(_PtBuscadorAgentforce, "properties", {
   _isTimeoutError: { state: true },
   _hasStartedConversation: { state: true },
   _followUpQuery: { state: true },
-  _relatedQuestions: { state: true }
+  _relatedQuestions: { state: true },
+  _showCopiedToast: { state: true }
 });
 let PtBuscadorAgentforce = _PtBuscadorAgentforce;
 customElements.define("pt-buscador-agentforce", PtBuscadorAgentforce);
