@@ -1156,11 +1156,16 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                 <path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/>
             </svg>`;
   }
-  get _thumbsDownSvg() {
+  get _starSvgDesktop() {
     return b$1`
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z"/>
-                <path d="M17 2h2.67A2.31 2.31 0 0122 4v7a2.31 2.31 0 01-2.33 2H17"/>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M8 1L10.5 5.5 15 8 10.5 10.5 8 15 5.5 10.5 1 8 5.5 5.5Z"/>
+            </svg>`;
+  }
+  get _starSvgMobile() {
+    return b$1`
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M8 1L10.5 5.5 15 8 10.5 10.5 8 15 5.5 10.5 1 8 5.5 5.5Z"/>
             </svg>`;
   }
   // --- Template -------------------------------------------------------------
@@ -1197,7 +1202,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                                 </button>
                                 <button class="buscador-btn-feedback buscador-btn-feedback--filled" data-id="btn-nao-encontrei" type="button" @click=${this.handleNaoEncontrei}>
                                     Não encontrei
-                                    ${this._thumbsDownSvg}
+                                    ${this._starSvgDesktop}
                                 </button>
                             </div>
                         </div>
@@ -1219,7 +1224,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                                     Sim, encontrei
                                 </button>
                                 <button class="buscador-btn-feedback buscador-btn-feedback--filled" data-id="btn-nao-encontrei" type="button" @click=${this.handleNaoEncontrei}>
-                                    ${this._thumbsDownSvg}
+                                    ${this._starSvgDesktop}
                                     Não encontrei
                                 </button>
                             </div>
@@ -1300,7 +1305,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                                         Sim, encontrei
                                     </button>
                                     <button class="buscador-btn-feedback buscador-btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
-                                        ${this._thumbsDownSvg}
+                                        ${this._starSvgMobile}
                                         Não, pesquisar com IA
                                     </button>
                                 </div>
@@ -1509,7 +1514,6 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             font-size: 0.6875rem;
             font-weight: 600;
             letter-spacing: 0.04em;
-            text-transform: uppercase;
             color: var(--color-secondary);
             background: var(--color-primary);
             border-radius: 4px;
@@ -1599,7 +1603,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             color: inherit;
         }
 
-        .buscador-service-card:hover { background-color: var(--color-n100); }
+        .buscador-service-card:hover { background-color: transparent; }
         .buscador-service-card:first-child { border-top: 1px solid var(--color-n300); }
 
         .buscador-service-card-content {
@@ -3732,13 +3736,13 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            background: var(--color-info-bg);       /* BG Informação */
-            border: 1px solid var(--color-info);    /* Cor Informação */
+            background: var(--color-secondary);
+            border: 1px solid var(--color-n400);
             border-radius: var(--radius-pill);
-            padding: 2px var(--space-1);            /* 2px 8px */
+            padding: 2px var(--space-1);
             font-size: 0.75rem;
             font-weight: 600;
-            color: var(--color-info);               /* Cor Informação */
+            color: var(--color-primary);
             line-height: 20px;
             white-space: nowrap;
             align-self: flex-start;
