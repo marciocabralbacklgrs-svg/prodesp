@@ -597,7 +597,11 @@ function injectStyles(tag, styles) {
   document.head.appendChild(el);
 }
 const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
-    connectedCallback() {
+  // --- Light DOM ------------------------------------------------------------
+  createRenderRoot() {
+    return this;
+  }
+  connectedCallback() {
     super.connectedCallback();
     injectStyles("pt-buscador-campo", _PtBuscadorCampo.styles);
   }
@@ -901,7 +905,11 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     this._simEncontreiFeedback = false;
     this._origem = "";
   }
-    connectedCallback() {
+  // --- Light DOM ------------------------------------------------------------
+  createRenderRoot() {
+    return this;
+  }
+  connectedCallback() {
     super.connectedCallback();
     injectStyles("pt-buscador-indice-pesquisa", _PtBuscadorIndicePesquisa.styles);
   }
@@ -3045,7 +3053,11 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
     this._relatedQuestions = [];
     this._showCopiedToast = false;
   }
-    connectedCallback() {
+  // ─── Light DOM ────────────────────────────────────────────────────────────
+  createRenderRoot() {
+    return this;
+  }
+  connectedCallback() {
     super.connectedCallback();
     injectStyles("pt-buscador-agentforce", _PtBuscadorAgentforce.styles);
   }
