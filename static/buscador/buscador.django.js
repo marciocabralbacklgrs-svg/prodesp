@@ -1552,6 +1552,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             font-size: 1.05rem;          /* Body Desktop */
             line-height: 19.32px;
             color: var(--color-n900);
+            padding: var(--space-2) 0;   /* 16px top e bottom */
         }
 
         .buscador-results-number { font-weight: 700; color: var(--color-primary); }
