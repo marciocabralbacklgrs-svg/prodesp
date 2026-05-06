@@ -1719,7 +1719,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         /* -- Responsividade -- */
         @media (max-width: 767px) {
             :host { padding: 0 var(--space-2); }
-            .buscador-wrapper { padding: var(--space-5) var(--space-2) var(--space-3); }
+            .buscador-wrapper { padding: var(--space-5) 0 var(--space-3); }
 
             /* Banner inline oculto no mobile */
             .buscador-feedback-banner { display: none; }
@@ -3637,6 +3637,8 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             display: flex;
             align-items: center;
             gap: var(--space-1);        /* 8px */
+            min-width: 0;
+            flex: 1;
         }
 
         .buscador-chatbox-title {
@@ -3645,6 +3647,8 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             line-height: 19.32px;
             color: var(--color-primary);
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* ── Pill "Modo IA" ── */
@@ -3670,6 +3674,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             display: flex;
             align-items: center;
             gap: var(--space-1);
+            flex-shrink: 0;
         }
 
         /* ── Botão fechar ── */
@@ -4078,10 +4083,24 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
 
         /* ── Responsividade ── */
         @media (max-width: 767px) {
-            .buscador-chatbox-panel { width: calc(100% - 2 * var(--space-2)); }
+            :host { padding: 0 var(--space-2); }
+            .buscador-chatbox-panel { width: 100%; }
 
             .buscador-chatbox-header {
                 padding: var(--space-2) var(--space-3); /* 16px 24px */
+                align-items: flex-start;
+            }
+
+            .buscador-chatbox-header-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
+
+            .buscador-chatbox-title {
+                white-space: normal;
+                overflow: visible;
+                text-overflow: unset;
             }
 
             .buscador-chatbox-messages {

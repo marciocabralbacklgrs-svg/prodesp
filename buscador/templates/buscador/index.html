@@ -1,57 +1,10 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Poupatempo — Buscador</title>
-    {% if enable_acessibilidade %}
-    <link rel="stylesheet" href="https://poupatempo.sp.gov.br/staticsfiles/css/acessibilidade.css">
-    <style>
-        /* ── Barra de Acessibilidade ── */
-        #barraAcessibilidade {
-            position: fixed;
-            top: 0;
-            right: 0;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
-        #menuAcessibilidade {
-            display: none;
-            flex-direction: column;
-            background: #1351b4;
-            border-radius: 0 0 0 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,.25);
-        }
-        #menuAcessibilidade.show { display: flex; }
-        #menuAcessibilidade a {
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 18px;
-            font-size: 14px;
-            font-family: sans-serif;
-            white-space: nowrap;
-            border-bottom: 1px solid rgba(255,255,255,.15);
-        }
-        #menuAcessibilidade a:last-child { border-bottom: none; }
-        #menuAcessibilidade a:hover { background: rgba(255,255,255,.15); }
-        #btnAcessibilidade {
-            background: #1351b4;
-            border: none;
-            cursor: pointer;
-            padding: 8px 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0 0 0 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.2);
-        }
-        #btnAcessibilidade svg { display: block; }
-    </style>
-    {% endif %}
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -87,15 +40,6 @@
         @keyframes rs-reveal-up {
             from { clip-path: inset(100% 0 0 0); }
             to   { clip-path: inset(0 0 0 0); }
-        }
-
-        /* ── Destacar links: estende destaque para botões ── */
-        body.hipelight-links button,
-        body.hipelight-links a {
-            background-color: yellow !important;
-            color: #000 !important;
-            outline: 2px solid #000 !important;
-            text-decoration: underline !important;
         }
 
         /* ── Agentforce section ── */
@@ -145,81 +89,6 @@
     </main>
 
     <script type="module" src="{% static 'buscador/buscador.django.js' %}"></script>
-
-    {% if enable_acessibilidade %}
-    <div id="barraAcessibilidade">
-        <div id="menuAcessibilidade" role="list">
-            <a href="javascript:void(0)" id="aumentaFonte" accesskey="1" role="listitem">Aumentar fonte</a>
-            <a href="javascript:void(0)" id="reduzFonte"   accesskey="2" role="listitem">Diminuir fonte</a>
-            <a href="javascript:void(0)" id="altocontraste" accesskey="3" role="listitem">Alto contraste</a>
-            <a href="javascript:void(0)" id="invertColors"  accesskey="4" role="listitem">Inverter cores</a>
-            <a href="javascript:void(0)" id="highlightLinks" accesskey="5" role="listitem">Destacar links</a>
-        </div>
-        <button id="btnAcessibilidade" aria-label="Abrir menu de acessibilidade" aria-expanded="false" aria-controls="menuAcessibilidade">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="4" r="2" fill="#fff"/>
-                <path d="M12 7c-3.9 0-7 1.1-7 2.5V11h4v8h6v-8h4V9.5C19 8.1 15.9 7 12 7z" fill="#fff"/>
-            </svg>
-        </button>
-    </div>
-    <script>
-    (function () {
-        var BASE_SIZE = 100;
-        var size = parseInt(sessionStorage.getItem('pt-font-size') || BASE_SIZE, 10);
-        document.documentElement.style.fontSize = size + '%';
-
-        function saveSize() { sessionStorage.setItem('pt-font-size', size); }
-
-        document.getElementById('aumentaFonte').addEventListener('click', function () {
-            size = Math.min(size + 10, 150);
-            document.documentElement.style.fontSize = size + '%';
-            saveSize();
-        });
-        document.getElementById('reduzFonte').addEventListener('click', function () {
-            size = Math.max(size - 10, 80);
-            document.documentElement.style.fontSize = size + '%';
-            saveSize();
-        });
-        document.getElementById('altocontraste').addEventListener('click', function () {
-            var b = document.body;
-            b.classList.toggle('contrast');
-            b.classList.remove('inversed');
-        });
-        document.getElementById('invertColors').addEventListener('click', function () {
-            var b = document.body;
-            b.classList.toggle('inversed');
-            b.classList.remove('contrast');
-        });
-        document.getElementById('highlightLinks').addEventListener('click', function () {
-            document.body.classList.toggle('hipelight-links');
-        });
-
-        var btn  = document.getElementById('btnAcessibilidade');
-        var menu = document.getElementById('menuAcessibilidade');
-        btn.addEventListener('click', function () {
-            var open = menu.classList.toggle('show');
-            btn.setAttribute('aria-expanded', open);
-        });
-        document.addEventListener('click', function (e) {
-            if (!document.getElementById('barraAcessibilidade').contains(e.target)) {
-                menu.classList.remove('show');
-                btn.setAttribute('aria-expanded', 'false');
-            }
-        });
-    })();
-    </script>
-    {% endif %}
-
-    {% if enable_vlibras %}
-    <div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
-        </div>
-    </div>
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
-    {% endif %}
 
 </body>
 </html>
