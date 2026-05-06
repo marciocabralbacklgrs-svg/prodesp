@@ -98,12 +98,159 @@
             <div class="vw-plugin-top-wrapper"></div>
         </div>
     </div>
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/spbgovbr-vlibras/vlibras-portal@dev/app/vlibras-plugin.js"></script>
     <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
     {% endif %}
 
     {% if enable_acessibilidade %}
-    <script src="https://barra.brasil.gov.br/barra.js" charset="UTF-8"></script>
+    <style>
+        body { padding-top: 36px; }
+
+        #ac-bar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: stretch;
+            height: 36px;
+            background: #1351b4;
+            font-family: system-ui, sans-serif;
+            font-size: 13px;
+        }
+        #ac-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 14px;
+            background: transparent;
+            color: #fff;
+            border: none;
+            border-right: 1px solid rgba(255,255,255,.2);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        #ac-btn:hover, #ac-btn:focus-visible { background: rgba(255,255,255,.15); outline: none; }
+        #ac-btn[aria-expanded="true"] { background: rgba(255,255,255,.2); }
+
+        #ac-menu {
+            display: flex;
+            align-items: stretch;
+            flex: 1;
+        }
+        #ac-menu[hidden] { display: none; }
+        #ac-menu button {
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            background: transparent;
+            color: #fff;
+            border: none;
+            border-right: 1px solid rgba(255,255,255,.15);
+            cursor: pointer;
+            font-size: 13px;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        #ac-menu button:hover,
+        #ac-menu button:focus-visible { background: rgba(255,255,255,.15); outline: none; }
+        #ac-menu button[aria-pressed="true"] { background: rgba(255,255,255,.28); font-weight: 700; }
+
+        body.ac-grayscale  { filter: grayscale(100%); }
+        body.ac-invert     { filter: invert(100%) hue-rotate(180deg); }
+        body.ac-bw-invert  { filter: grayscale(100%) invert(100%); }
+        body.ac-links a    { outline: 2px solid currentColor !important; text-decoration: underline !important; background: rgba(255,255,0,.25); }
+    </style>
+
+    <div id="ac-bar" role="region" aria-label="Barra de acessibilidade">
+        <button id="ac-btn" aria-expanded="false" aria-controls="ac-menu">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="4" r="2"/>
+                <path d="M19 13v-2h-6V9h-2v2H5v2h4l-1.8 7h2.1l1.2-5h3l1.2 5h2.1L15 13h4z"/>
+            </svg>
+            Acessibilidade
+        </button>
+        <div id="ac-menu" hidden role="group" aria-label="Opções de acessibilidade">
+            <button id="ac-font-inc" aria-label="Aumentar fonte">A+</button>
+            <button id="ac-font-dec" aria-label="Diminuir fonte">A−</button>
+            <button id="ac-bw"    aria-pressed="false" aria-label="Preto e branco">Preto e branco</button>
+            <button id="ac-inv"   aria-pressed="false" aria-label="Inverter cores">Inverter cores</button>
+            <button id="ac-links" aria-pressed="false" aria-label="Destacar links">Destacar links</button>
+            <button id="ac-reset" aria-label="Restaurar padrão">Restaurar</button>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        var KEY  = 'pt-ac-prefs';
+        var ROOT = document.documentElement;
+        var BODY = document.body;
+        var MIN  = 12, MAX = 24, STEP = 2, DEFAULT_FS = 16;
+
+        var s = { fs: DEFAULT_FS, bw: false, inv: false, links: false };
+
+        function load() {
+            try { Object.assign(s, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (_) {}
+        }
+        function save() {
+            try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (_) {}
+        }
+
+        function applyFont()    { ROOT.style.fontSize = s.fs + 'px'; }
+        function applyFilters() {
+            BODY.classList.toggle('ac-grayscale', s.bw && !s.inv);
+            BODY.classList.toggle('ac-invert',    !s.bw && s.inv);
+            BODY.classList.toggle('ac-bw-invert', s.bw && s.inv);
+        }
+        function applyLinks()   { BODY.classList.toggle('ac-links', s.links); }
+        function applyAll()     { applyFont(); applyFilters(); applyLinks(); }
+
+        function syncUI() {
+            document.getElementById('ac-bw').setAttribute('aria-pressed',    s.bw);
+            document.getElementById('ac-inv').setAttribute('aria-pressed',   s.inv);
+            document.getElementById('ac-links').setAttribute('aria-pressed', s.links);
+        }
+
+        function toggle(key, fn) {
+            s[key] = !s[key]; fn(); syncUI(); save();
+        }
+
+        document.getElementById('ac-btn').addEventListener('click', function () {
+            var open = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !open);
+            document.getElementById('ac-menu').hidden = open;
+        });
+
+        document.getElementById('ac-font-inc').addEventListener('click', function () {
+            s.fs = Math.min(s.fs + STEP, MAX); applyFont(); save();
+        });
+        document.getElementById('ac-font-dec').addEventListener('click', function () {
+            s.fs = Math.max(s.fs - STEP, MIN); applyFont(); save();
+        });
+        document.getElementById('ac-bw').addEventListener('click',    function () { toggle('bw',    applyFilters); });
+        document.getElementById('ac-inv').addEventListener('click',   function () { toggle('inv',   applyFilters); });
+        document.getElementById('ac-links').addEventListener('click', function () { toggle('links', applyLinks);   });
+        document.getElementById('ac-reset').addEventListener('click', function () {
+            s = { fs: DEFAULT_FS, bw: false, inv: false, links: false };
+            applyAll(); syncUI(); save();
+        });
+
+        document.addEventListener('click', function (e) {
+            var bar = document.getElementById('ac-bar');
+            if (bar && !bar.contains(e.target)) {
+                var btn = document.getElementById('ac-btn');
+                if (btn.getAttribute('aria-expanded') === 'true') {
+                    btn.setAttribute('aria-expanded', 'false');
+                    document.getElementById('ac-menu').hidden = true;
+                }
+            }
+        });
+
+        load(); applyAll(); syncUI();
+    })();
+    </script>
     {% endif %}
 
 </body>
