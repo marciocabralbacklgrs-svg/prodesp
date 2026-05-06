@@ -4124,7 +4124,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             .buscador-chatbox-send-btn { font-size: 0.875rem; padding: var(--space-1) var(--space-2); }
         }
 
-        @media (max-width: 400px) {
+        @media (max-width: 386px) {
             .buscador-chatbox-header {
                 align-items: flex-start;
                 position: relative;
