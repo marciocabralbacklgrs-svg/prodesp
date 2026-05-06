@@ -8,6 +8,10 @@ SECRET_KEY    = config('SECRET_KEY')
 DEBUG         = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
+# ─── Plugins de acessibilidade ────────────────────────────────────────────────
+ENABLE_VLIBRAS        = config('ENABLE_VLIBRAS',        default=False, cast=bool)
+ENABLE_ACESSIBILIDADE = config('ENABLE_ACESSIBILIDADE', default=False, cast=bool)
+
 # ─── Salesforce ───────────────────────────────────────────────────────────────
 SF_INSTANCE_URL  = config('SF_INSTANCE_URL')
 SF_CLIENT_ID     = config('SF_CLIENT_ID')

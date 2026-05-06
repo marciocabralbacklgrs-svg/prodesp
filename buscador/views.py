@@ -157,4 +157,8 @@ class BuscadorSearchView(View):
 from django.shortcuts import render
 
 def buscador_page(request):
-    return render(request, "buscador/index.html")
+    context = {
+        "enable_vlibras":        settings.ENABLE_VLIBRAS,
+        "enable_acessibilidade": settings.ENABLE_ACESSIBILIDADE,
+    }
+    return render(request, "buscador/index.html", context)
