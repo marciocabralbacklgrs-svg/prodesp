@@ -4124,34 +4124,6 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             .buscador-chatbox-send-btn { font-size: 0.875rem; padding: var(--space-1) var(--space-2); }
         }
 
-        @media (max-width: 386px) {
-            .buscador-chatbox-header {
-                align-items: flex-start;
-                position: relative;
-                padding-left: var(--space-1);
-                padding-right: 36px;
-            }
-
-            .buscador-chatbox-header-left {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 2px;
-                width: 100%;
-            }
-
-            .buscador-header-actions {
-                position: absolute;
-                top: 8px;
-                right: 8px;
-            }
-
-            .buscador-chatbox-title {
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                width: 100%;
-            }
-        }
     `]);
 // ─── Reactive properties ──────────────────────────────────────────────────
 __publicField(_PtBuscadorAgentforce, "properties", {
