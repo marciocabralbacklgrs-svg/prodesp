@@ -4096,8 +4096,8 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             }
 
             .buscador-close-btn {
-                width: 28px;
-                height: 28px;
+                width: 24px;
+                height: 24px;
             }
 
             .buscador-chatbox-messages {
@@ -4126,23 +4126,23 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
 
         @media (max-width: 400px) {
             .buscador-chatbox-header {
-                flex-direction: column;
                 align-items: flex-start;
                 position: relative;
-                padding-right: 48px;
-                gap: 2px;
+                padding-left: var(--space-1);
+                padding-right: 36px;
             }
 
             .buscador-chatbox-header-left {
-                flex-direction: row;
-                align-items: center;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
                 width: 100%;
             }
 
             .buscador-header-actions {
                 position: absolute;
                 top: 8px;
-                right: 16px;
+                right: 8px;
             }
 
             .buscador-chatbox-title {
