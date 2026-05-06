@@ -158,9 +158,6 @@
         #ac-menu button:focus-visible { background: rgba(255,255,255,.15); outline: none; }
         #ac-menu button[aria-pressed="true"] { background: rgba(255,255,255,.28); font-weight: 700; }
 
-        body.ac-grayscale  { filter: grayscale(100%); }
-        body.ac-invert     { filter: invert(100%) hue-rotate(180deg); }
-        body.ac-bw-invert  { filter: grayscale(100%) invert(100%); }
         body.ac-links a    { outline: 2px solid currentColor !important; text-decoration: underline !important; background: rgba(255,255,0,.25); }
     </style>
 
@@ -200,9 +197,10 @@
 
         function applyFont()    { ROOT.style.fontSize = s.fs + 'px'; }
         function applyFilters() {
-            BODY.classList.toggle('ac-grayscale', s.bw && !s.inv);
-            BODY.classList.toggle('ac-invert',    !s.bw && s.inv);
-            BODY.classList.toggle('ac-bw-invert', s.bw && s.inv);
+            var f = [];
+            if (s.bw)  f.push('grayscale(100%)');
+            if (s.inv) f.push('invert(100%) hue-rotate(180deg)');
+            ROOT.style.filter = f.join(' ') || '';
         }
         function applyLinks()   { BODY.classList.toggle('ac-links', s.links); }
         function applyAll()     { applyFont(); applyFilters(); applyLinks(); }
