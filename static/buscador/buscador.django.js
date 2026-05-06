@@ -1605,7 +1605,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
 
         .buscador-service-title {
             display: block;
-            font-size: 24px;
+            font-size: 1.5rem;
             font-weight: 400;
             color: var(--color-primary);
             margin: 0;
@@ -1616,7 +1616,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
 
 
         .buscador-service-desc {
-            font-size: 14px;
+            font-size: 0.875rem;
             font-weight: 400;
             line-height: 17.07px;
             padding-top: 20px;
@@ -1625,7 +1625,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
 
         .buscador-service-tags {
             color: var(--color-primary);
-            font-size: 14px;
+            font-size: 0.875rem;
             font-weight: 400;
             line-height: 17.07px;
             text-align: left;
@@ -1639,7 +1639,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             margin-left: 6px;
             padding: 4px 8px;
             border-radius: 4px;
-            font-size: 10px;
+            font-size: 0.625rem;
             font-weight: 600;
             line-height: 12.19px;
             text-align: center;
@@ -1772,16 +1772,16 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             }
 
             .buscador-service-title {
-                font-size: 20px;
-                line-height: 24px;
+                font-size: 1.25rem;
+                line-height: 1.5;
             }
 
             .buscador-service-desc,
             .buscador-results-count,
             .buscador-no-results-message,
             .buscador-search-error {
-                font-size: 14px;
-                line-height: 20.3px;
+                font-size: 0.875rem;
+                line-height: 1.25;
             }
 
             .buscador-service-card {
@@ -3979,7 +3979,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             height: 30px;
             border: none;
             background: transparent;
-            color: #000;
+            color: var(--color-primary);
             cursor: pointer;
             border-radius: var(--radius-card);
             padding: 0;
@@ -4017,9 +4017,9 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
-            background: #323232;
-            color: #fff;
-            font-size: 14px;
+            background: var(--color-n900);
+            color: var(--color-secondary);
+            font-size: 0.875rem;
             font-weight: 400;
             padding: 10px 16px;
             border-radius: 4px;
@@ -4122,6 +4122,34 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
 
             .buscador-chatbox-input { font-size: 0.875rem; }
             .buscador-chatbox-send-btn { font-size: 0.875rem; padding: var(--space-1) var(--space-2); }
+        }
+
+        @media (forced-colors: active) {
+            .buscador-ia-pill,
+            .buscador-resposta-pill {
+                forced-color-adjust: none;
+                border-color: ButtonText;
+            }
+
+            .buscador-close-btn,
+            .buscador-chatbox-send-btn {
+                forced-color-adjust: none;
+                border: 1px solid ButtonText;
+            }
+
+            .buscador-related-pill,
+            .buscador-frequent-pill {
+                forced-color-adjust: none;
+                border-color: ButtonText;
+            }
+
+            .buscador-chatbox-input-wrapper {
+                border-color: ButtonText;
+            }
+
+            .buscador-copied-toast {
+                forced-color-adjust: none;
+            }
         }
 
     `]);
