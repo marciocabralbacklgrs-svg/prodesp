@@ -4124,6 +4124,28 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             .buscador-chatbox-send-btn { font-size: 0.875rem; padding: var(--space-1) var(--space-2); }
         }
 
+        @media (max-width: 386px) {
+            .buscador-chatbox-header {
+                align-items: flex-start;
+            }
+
+            .buscador-chatbox-header-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
+
+            .buscador-chatbox-title {
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+            }
+
+            .buscador-header-actions {
+                align-self: flex-start;
+            }
+        }
+
         @media (forced-colors: active) {
             .buscador-ia-pill,
             .buscador-resposta-pill {
