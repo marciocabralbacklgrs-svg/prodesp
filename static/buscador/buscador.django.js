@@ -1684,13 +1684,14 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             /* Banner inline oculto no mobile */
             .buscador-feedback-banner { display: none; }
 
-            /* Bottom sheet: ao final do componente, largura total do viewport */
+            /* Bottom sheet: flutua na tela, para ao final do componente (após paginação) */
             .buscador-feedback-sheet {
                 display: flex;
                 flex-direction: column;
                 align-items: stretch;
-                position: relative;
-                z-index: 1;
+                position: sticky;
+                bottom: 0;
+                z-index: 10;
                 width: 100vw;
                 margin-left: calc(50% - 50vw);
                 background: var(--color-n200);
