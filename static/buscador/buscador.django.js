@@ -891,7 +891,6 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     __publicField(this, "_cache", /* @__PURE__ */ new Map());
     __publicField(this, "_inFlightTerm", "");
     __publicField(this, "_consecutiveErrors", 0);
-    __publicField(this, "_touchStartY", 0);
     this.searchApiUrl = "/api/services/search";
     this.orquestradorApiUrl = "";
     this.orquestradorClientId = "";
@@ -901,7 +900,6 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     this._hasError = false;
     this._currentPage = 1;
     this._results = [];
-    this._isMobileSheetExpanded = false;
     this._simEncontreiFeedback = false;
     this._origem = "";
   }
@@ -982,14 +980,8 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
   get _showPagination() {
     return this._totalPages > 1;
   }
-  get _showFeedback() {
-    return this._hasSearched && !this._isLoading;
-  }
   get _skeletonItems() {
     return [0, 1, 2, 3, 4];
-  }
-  get _feedbackSheetClass() {
-    return this._isMobileSheetExpanded ? "buscador-feedback-sheet buscador-feedback-sheet--expanded" : "buscador-feedback-sheet";
   }
   get _displayedResults() {
     const start = (this._currentPage - 1) * PAGE_SIZE;
@@ -1025,7 +1017,6 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
   }
   // ─── Event handlers ───────────────────────────────────────────────────────
   handleSimEncontrei() {
-    this._isMobileSheetExpanded = false;
     this._simEncontreiFeedback = true;
     this.dispatchEvent(new CustomEvent("found", {
       bubbles: true,
@@ -1034,25 +1025,11 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     }));
   }
   handleNaoEncontrei() {
-    this._isMobileSheetExpanded = false;
     this.dispatchEvent(new CustomEvent("notfound", {
       bubbles: true,
       composed: true,
       detail: { searchTerm: this._searchTermValue }
     }));
-  }
-  handleTouchStart(event) {
-    this._touchStartY = event.touches[0].clientY;
-  }
-  handleTouchEnd(event) {
-    const dy = this._touchStartY - event.changedTouches[0].clientY;
-    if (Math.abs(dy) < 8) {
-      this._isMobileSheetExpanded = !this._isMobileSheetExpanded;
-    } else if (dy > 30) {
-      this._isMobileSheetExpanded = true;
-    } else if (dy < -30) {
-      this._isMobileSheetExpanded = false;
-    }
   }
   goToPage(event) {
     const page = parseInt(event.currentTarget.dataset.page, 10);
@@ -1287,33 +1264,24 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                     </div>
                 ` : ""}
 
-                ${this._showFeedback ? b$1`
-                    <div class=${this._feedbackSheetClass}
-                         role="region"
-                         aria-label="Feedback de pesquisa"
-                         data-id="feedback-sheet">
-                        <div class="buscador-feedback-sheet-handle"
-                             @touchstart=${this.handleTouchStart}
-                             @touchend=${this.handleTouchEnd}>
-                            <div class="buscador-feedback-sheet-handle-bar"></div>
-                        </div>
-                        <div class="buscador-feedback-sheet-body">
-                            <span class="buscador-feedback-question">Encontrou o que procurava?</span>
-                            <div class="buscador-feedback-sheet-btns">
-                                <div class="buscador-feedback-actions">
-                                    <button class=${this._simEncontreiFeedback ? "buscador-btn-feedback buscador-btn-feedback--confirmed" : "buscador-btn-feedback buscador-btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
-                                        ${this._thumbsUpSvg}
-                                        Sim, encontrei
-                                    </button>
-                                    <button class="buscador-btn-feedback buscador-btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
-                                        ${this._starSvgMobile}
-                                        Não encontrei
-                                    </button>
-                                </div>
-                            </div>
+                <div class="buscador-feedback-sheet"
+                     role="region"
+                     aria-label="Feedback de pesquisa"
+                     data-id="feedback-sheet">
+                    <div class="buscador-feedback-sheet-body">
+                        <span class="buscador-feedback-question">Encontrou o que procurava?</span>
+                        <div class="buscador-feedback-actions">
+                            <button class=${this._simEncontreiFeedback ? "buscador-btn-feedback buscador-btn-feedback--confirmed" : "buscador-btn-feedback buscador-btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
+                                ${this._thumbsUpSvg}
+                                Sim, encontrei
+                            </button>
+                            <button class="buscador-btn-feedback buscador-btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
+                                ${this._starSvgMobile}
+                                Não encontrei
+                            </button>
                         </div>
                     </div>
-                ` : ""}
+                </div>
 
             </div>
         `;
@@ -1529,23 +1497,6 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             display: none;
         }
 
-        .buscador-feedback-sheet-handle {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 12px 0 8px;
-            width: 100%;
-            cursor: grab;
-            touch-action: none;
-        }
-
-        .buscador-feedback-sheet-handle-bar {
-            width: 32px;
-            height: 4px;
-            border-radius: 2px;
-            background: var(--color-n400);
-        }
-
         .buscador-feedback-sheet-body {
             display: flex;
             flex-direction: column;
@@ -1744,19 +1695,6 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
                 box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
             }
 
-            /* Botões colapsados por padrão */
-            .buscador-feedback-sheet-btns {
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height 300ms ease-out;
-                width: 100%;
-            }
-
-            /* Expandido: botões revelados */
-            .buscador-feedback-sheet--expanded .buscador-feedback-sheet-btns {
-                max-height: 200px;
-            }
-
             .buscador-feedback-question {
                 font-size: 1.125rem;
                 font-weight: 500;
@@ -1806,7 +1744,6 @@ __publicField(_PtBuscadorIndicePesquisa, "properties", {
   _hasError: { state: true },
   _currentPage: { state: true },
   _results: { state: true },
-  _isMobileSheetExpanded: { state: true },
   _simEncontreiFeedback: { state: true },
   _origem: { state: true }
 });
