@@ -1,4 +1,4 @@
-﻿var __defProp = Object.defineProperty;
+var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 /**
@@ -597,7 +597,7 @@ function injectStyles(tag, styles) {
   document.head.appendChild(el);
 }
 const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
-  // --- Light DOM ------------------------------------------------------------
+  // ─── Light DOM ────────────────────────────────────────────────────────────
   createRenderRoot() {
     return this;
   }
@@ -612,7 +612,7 @@ const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
     this.frequentSearches = ["Novo RG", "Renovar CNH", "Pagar o IPVA do carro"];
     this._inputValue = "";
   }
-  // --- Public API -----------------------------------------------------------
+  // ─── Public API ───────────────────────────────────────────────────────────
   get value() {
     return this._inputValue;
   }
@@ -621,7 +621,7 @@ const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
     const input = this.querySelector(".buscador-search-input");
     if (input) input.value = this._inputValue;
   }
-  // --- Handlers -------------------------------------------------------------
+  // ─── Handlers ─────────────────────────────────────────────────────────────
   _handleInput(e2) {
     this._inputValue = e2.target.value;
   }
@@ -635,7 +635,7 @@ const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
     if (input) input.value = label;
     this._doSearch();
   }
-  // --- Private --------------------------------------------------------------
+  // ─── Private ──────────────────────────────────────────────────────────────
   _doSearch() {
     const term = this._inputValue.trim();
     if (!term) return;
@@ -645,7 +645,7 @@ const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
       detail: { term }
     }));
   }
-  // --- Template -------------------------------------------------------------
+  // ─── Template ─────────────────────────────────────────────────────────────
   render() {
     var _a2;
     return b$1`
@@ -692,10 +692,10 @@ const _PtBuscadorCampo = class _PtBuscadorCampo extends i$1 {
         `;
   }
 };
-// --- Styles ---------------------------------------------------------------
+// ─── Styles ───────────────────────────────────────────────────────────────
 __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
 
-        /* -- Design System Tokens — UI Kit Poupatempo SP.GOV.BR -- */
+        /* ── Design System Tokens — UI Kit Poupatempo SP.GOV.BR ── */
         :host {
             /* Cores */
             --color-primary:    #000000;
@@ -749,7 +749,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
             align-items: center;
         }
 
-        /* -- Título -- */
+        /* ── Título ── */
         .buscador-search-title {
             font-size: 1.512rem;         /* H4 Desktop — Rawline SemiBold */
             font-weight: 600;
@@ -760,7 +760,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
             font-family: inherit;
         }
 
-        /* -- Barra de busca -- */
+        /* ── Barra de busca ── */
         .buscador-search-bar {
             display: flex;
             align-items: center;
@@ -812,7 +812,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
 
         .buscador-search-btn:hover { color: var(--color-info); }
 
-        /* -- Buscas frequentes -- */
+        /* ── Buscas frequentes ── */
         .buscador-frequent-searches {
             display: flex;
             flex-direction: column;
@@ -852,7 +852,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
             color: var(--color-secondary);
         }
 
-        /* -- Responsividade -- */
+        /* ── Responsividade ── */
         @media (max-width: 767px) {
             .buscador-search-section {
                 padding: var(--space-5) var(--space-2) var(--space-3);
@@ -870,7 +870,7 @@ __publicField(_PtBuscadorCampo, "styles", [rawlineFont, i$4`
             }
         }
     `]);
-// --- Properties ----------------------------------------------------------
+// ─── Properties ──────────────────────────────────────────────────────────
 __publicField(_PtBuscadorCampo, "properties", {
   title: { type: String },
   placeholder: { type: String },
@@ -882,7 +882,7 @@ const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 const MIN_SEARCH_LENGTH = 2;
 const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
-  // --- Constructor ----------------------------------------------------------
+  // ─── Constructor ──────────────────────────────────────────────────────────
   constructor() {
     super();
     __publicField(this, "_searchTermValue", "");
@@ -905,7 +905,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     this._simEncontreiFeedback = false;
     this._origem = "";
   }
-  // --- Light DOM ------------------------------------------------------------
+  // ─── Light DOM ────────────────────────────────────────────────────────────
   createRenderRoot() {
     return this;
   }
@@ -949,7 +949,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     if (!anchor) return 0;
     return Math.round(anchor.getBoundingClientRect().top - this.getBoundingClientRect().top);
   }
-  // --- Lifecycle ------------------------------------------------------------
+  // ─── Lifecycle ────────────────────────────────────────────────────────────
   disconnectedCallback() {
     var _a2;
     super.disconnectedCallback();
@@ -960,7 +960,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     (_a2 = this._abortController) == null ? void 0 : _a2.abort();
     this._inFlightTerm = "";
   }
-  // --- Computed -------------------------------------------------------------
+  // ─── Computed ─────────────────────────────────────────────────────────────
   get _hasResults() {
     return this._hasSearched && !this._isLoading && this._results.length > 0;
   }
@@ -1014,9 +1014,16 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
   }
   _makePage(num, current) {
     const isActive = num === current;
-    return { key: String(num), label: String(num), page: num, isEllipsis: false, btnClass: isActive ? "buscador-page-btn buscador-page-btn--active" : "buscador-page-btn" };
+    return {
+      key: String(num),
+      label: String(num),
+      page: num,
+      isActive,
+      isEllipsis: false,
+      btnClass: isActive ? "buscador-page-btn buscador-page-btn--active" : "buscador-page-btn"
+    };
   }
-  // --- Event handlers -------------------------------------------------------
+  // ─── Event handlers ───────────────────────────────────────────────────────
   handleSimEncontrei() {
     this._isMobileSheetExpanded = false;
     this._simEncontreiFeedback = true;
@@ -1066,7 +1073,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
       this._scrollToResults();
     }
   }
-  // --- Private helpers ------------------------------------------------------
+  // ─── Private helpers ──────────────────────────────────────────────────────
   _doSearch() {
     var _a2;
     const term = this._searchTermValue.trim();
@@ -1148,7 +1155,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
     });
     return { results, origem };
   }
-  // --- SVG helpers ----------------------------------------------------------
+  // ─── SVG helpers ──────────────────────────────────────────────────────────
   get _thumbsUpSvg() {
     return b$1`
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1168,7 +1175,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                 <path d="M8 1L10.5 5.5 15 8 10.5 10.5 8 15 5.5 10.5 1 8 5.5 5.5Z"/>
             </svg>`;
   }
-  // --- Template -------------------------------------------------------------
+  // ─── Template ─────────────────────────────────────────────────────────────
   render() {
     return b$1`
             <div class="buscador-wrapper">
@@ -1211,6 +1218,7 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                             <span class="buscador-results-suffix"> encontrados</span>
                         </div>
                         <p class="buscador-no-results-message" data-id="no-results-message">Nenhum resultado encontrado para a sua busca. Tente outros termos ou explore os serviços disponíveis.</p>
+                    </div>
 
                 ` : this._hasResults ? b$1`
                     <div class="buscador-search-results" data-results-anchor data-id="results-container">
@@ -1436,7 +1444,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
         .buscador-search-results {
             display: flex;
             flex-direction: column;
-            gap: var(--space-1);        /* 24px */
+            gap: var(--space-3);        /* 24px */
             width: 100%;
         }
 
@@ -1508,6 +1516,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             font-size: 0.6875rem;
             font-weight: 600;
             letter-spacing: 0.04em;
+            text-transform: uppercase;
             color: var(--color-secondary);
             background: var(--color-primary);
             border-radius: 4px;
@@ -1614,7 +1623,6 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             line-height: 28.77px;
         }
 
-
         .buscador-service-desc {
             font-size: 0.875rem;
             font-weight: 400;
@@ -1716,7 +1724,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             user-select: none;
         }
 
-        /* -- Responsividade -- */
+        /* ── Responsividade ── */
         @media (max-width: 767px) {
             :host { padding: 0 var(--space-2); }
             .buscador-wrapper { padding: var(--space-5) 0 var(--space-3); }
@@ -1756,7 +1764,6 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
                 line-height: 26px;
             }
 
-            /* Padding dentro do container colapsável: invisível quando recolhido */
             .buscador-feedback-actions {
                 flex-direction: column;
                 width: 100%;
@@ -1780,8 +1787,8 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             .buscador-results-count,
             .buscador-no-results-message,
             .buscador-search-error {
-                font-size: 0.875rem;
-                line-height: 1.25;
+                font-size: 0.875rem;        /* Body Mobile */
+                line-height: 20.3px;
             }
 
             .buscador-service-card {
@@ -1789,7 +1796,7 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             }
         }
     `]);
-// --- Reactive properties --------------------------------------------------
+// ─── Reactive properties ──────────────────────────────────────────────────
 __publicField(_PtBuscadorIndicePesquisa, "properties", {
   searchApiUrl: { attribute: "search-api-url" },
   orquestradorApiUrl: { attribute: "orquestrador-api-url" },
@@ -3023,7 +3030,7 @@ g.walkTokens;
 g.parseInline;
 b.parse;
 x.lex;
-const FETCH_TIMEOUT_MS = 30e3;
+const FETCH_TIMEOUT_MS = 6e4;
 const FEEDBACK_MAP = { like: "GOOD", dislike: "BAD" };
 const SHARE_SUBJECT = "Resposta do Assistente Poupatempo";
 const _mdRenderer = new g.Renderer();
@@ -3320,18 +3327,19 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
     this._sequenceId = 1;
     this._msgCounter = 0;
     this._hasStartedConversation = false;
+    this._showCopiedToast = false;
   }
   _formatSensitiveData(term) {
     if (!term) return term;
     const digits = term.replace(/[^0-9]/g, "");
-    const withX  = term.replace(/[^0-9xX]/g, "").toUpperCase();
-    const isRepeated = (v) => {
-      if (!v) return false;
-      const first = v[0];
-      const removed = v.replace(new RegExp(first, "g"), "");
-      return v[v.length - 1] !== "X" ? removed.length === 0 : removed.length === 1;
+    const withX = term.replace(/[^0-9xX]/g, "").toUpperCase();
+    const isRepeated = (v2) => {
+      if (!v2) return false;
+      const first = v2[0];
+      const removed = v2.replace(new RegExp(first, "g"), "");
+      return v2[v2.length - 1] !== "X" ? removed.length === 0 : removed.length === 1;
     };
-    const mask = (v) => v.substring(0, 3) + "*******";
+    const mask = (v2) => v2.substring(0, 3) + "*******";
     if (digits.length === 11 && !isRepeated(digits)) return mask(digits);
     if (digits.length === 14 && !isRepeated(digits)) return mask(digits);
     if (withX.length >= 8 && withX.length <= 9 && !isRepeated(withX)) return mask(withX);
@@ -3404,11 +3412,19 @@ const _PtBuscadorAgentforce = class _PtBuscadorAgentforce extends i$1 {
     }
   }
   _shareWhatsApp(text) {
-    const w2 = window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+    const w2 = window.open(
+      `https://wa.me/?text=${encodeURIComponent(text)}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
     return w2 !== null;
   }
   _shareTelegram(text) {
-    const w2 = window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+    const w2 = window.open(
+      `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(text)}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
     return w2 !== null;
   }
   _shareEmail(text) {
@@ -3637,8 +3653,6 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             display: flex;
             align-items: center;
             gap: var(--space-1);        /* 8px */
-            min-width: 0;
-            flex: 1;
         }
 
         .buscador-chatbox-title {
@@ -3646,9 +3660,6 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             font-weight: 600;
             line-height: 19.32px;
             color: var(--color-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         /* ── Pill "Modo IA" ── */
@@ -3674,7 +3685,6 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             display: flex;
             align-items: center;
             gap: var(--space-1);
-            flex-shrink: 0;
         }
 
         /* ── Botão fechar ── */
@@ -3755,13 +3765,13 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            background: var(--color-secondary);
-            border: 1px solid var(--color-n400);
+            background: var(--color-info-bg);       /* BG Informação */
+            border: 1px solid var(--color-info);    /* Cor Informação */
             border-radius: var(--radius-pill);
-            padding: 2px var(--space-1);
+            padding: 2px var(--space-1);            /* 2px 8px */
             font-size: 0.75rem;
             font-weight: 600;
-            color: var(--color-primary);
+            color: var(--color-info);               /* Cor Informação */
             line-height: 20px;
             white-space: nowrap;
             align-self: flex-start;
@@ -3979,7 +3989,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             height: 30px;
             border: none;
             background: transparent;
-            color: var(--color-primary);
+            color: var(--color-n400);
             cursor: pointer;
             border-radius: var(--radius-card);
             padding: 0;
@@ -4122,56 +4132,6 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
 
             .buscador-chatbox-input { font-size: 0.875rem; }
             .buscador-chatbox-send-btn { font-size: 0.875rem; padding: var(--space-1) var(--space-2); }
-        }
-
-        @media (max-width: 386px) {
-            .buscador-chatbox-header {
-                align-items: flex-start;
-            }
-
-            .buscador-chatbox-header-left {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 2px;
-            }
-
-            .buscador-chatbox-title {
-                white-space: normal;
-                overflow: visible;
-                text-overflow: clip;
-            }
-
-            .buscador-header-actions {
-                align-self: flex-start;
-            }
-        }
-
-        @media (forced-colors: active) {
-            .buscador-ia-pill,
-            .buscador-resposta-pill {
-                forced-color-adjust: none;
-                border-color: ButtonText;
-            }
-
-            .buscador-close-btn,
-            .buscador-chatbox-send-btn {
-                forced-color-adjust: none;
-                border: 1px solid ButtonText;
-            }
-
-            .buscador-related-pill,
-            .buscador-frequent-pill {
-                forced-color-adjust: none;
-                border-color: ButtonText;
-            }
-
-            .buscador-chatbox-input-wrapper {
-                border-color: ButtonText;
-            }
-
-            .buscador-copied-toast {
-                forced-color-adjust: none;
-            }
         }
 
     `]);
