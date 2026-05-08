@@ -1516,7 +1516,6 @@ __publicField(_PtBuscadorIndicePesquisa, "styles", [rawlineFont, i$4`
             font-size: 0.6875rem;
             font-weight: 600;
             letter-spacing: 0.04em;
-            text-transform: uppercase;
             color: var(--color-secondary);
             background: var(--color-primary);
             border-radius: 4px;
@@ -3765,13 +3764,13 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            background: var(--color-info-bg);       /* BG Informação */
-            border: 1px solid var(--color-info);    /* Cor Informação */
+            background: var(--color-secondary);
+            border: 1px solid var(--color-n400);
             border-radius: var(--radius-pill);
-            padding: 2px var(--space-1);            /* 2px 8px */
+            padding: 2px var(--space-1);
             font-size: 0.75rem;
             font-weight: 600;
-            color: var(--color-info);               /* Cor Informação */
+            color: var(--color-primary);
             line-height: 20px;
             white-space: nowrap;
             align-self: flex-start;
@@ -3989,7 +3988,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             height: 30px;
             border: none;
             background: transparent;
-            color: var(--color-n400);
+            color: var(--color-primary);
             cursor: pointer;
             border-radius: var(--radius-card);
             padding: 0;
@@ -4132,6 +4131,35 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
 
             .buscador-chatbox-input { font-size: 0.875rem; }
             .buscador-chatbox-send-btn { font-size: 0.875rem; padding: var(--space-1) var(--space-2); }
+        }
+
+        /* ── Alto contraste (Windows HC / forced-colors) ── */
+        @media (forced-colors: active) {
+            .buscador-ia-pill,
+            .buscador-resposta-pill {
+                forced-color-adjust: none;
+                border-color: ButtonText;
+            }
+
+            .buscador-close-btn,
+            .buscador-chatbox-send-btn {
+                forced-color-adjust: none;
+                border: 1px solid ButtonText;
+            }
+
+            .buscador-related-pill,
+            .buscador-frequent-pill {
+                forced-color-adjust: none;
+                border-color: ButtonText;
+            }
+
+            .buscador-chatbox-input-wrapper {
+                border-color: ButtonText;
+            }
+
+            .buscador-copied-toast {
+                forced-color-adjust: none;
+            }
         }
 
     `]);
