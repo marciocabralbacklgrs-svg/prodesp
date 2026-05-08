@@ -1264,24 +1264,26 @@ const _PtBuscadorIndicePesquisa = class _PtBuscadorIndicePesquisa extends i$1 {
                     </div>
                 ` : ""}
 
-                <div class="buscador-feedback-sheet"
-                     role="region"
-                     aria-label="Feedback de pesquisa"
-                     data-id="feedback-sheet">
-                    <div class="buscador-feedback-sheet-body">
-                        <span class="buscador-feedback-question">Encontrou o que procurava?</span>
-                        <div class="buscador-feedback-actions">
-                            <button class=${this._simEncontreiFeedback ? "buscador-btn-feedback buscador-btn-feedback--confirmed" : "buscador-btn-feedback buscador-btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
-                                ${this._thumbsUpSvg}
-                                Sim, encontrei
-                            </button>
-                            <button class="buscador-btn-feedback buscador-btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
-                                ${this._starSvgMobile}
-                                Não encontrei
-                            </button>
+                ${this._hasSearched && !this._isLoading ? b$1`
+                    <div class="buscador-feedback-sheet"
+                         role="region"
+                         aria-label="Feedback de pesquisa"
+                         data-id="feedback-sheet">
+                        <div class="buscador-feedback-sheet-body">
+                            <span class="buscador-feedback-question">Encontrou o que procurava?</span>
+                            <div class="buscador-feedback-actions">
+                                <button class=${this._simEncontreiFeedback ? "buscador-btn-feedback buscador-btn-feedback--confirmed" : "buscador-btn-feedback buscador-btn-feedback--outlined"} type="button" @click=${this.handleSimEncontrei}>
+                                    ${this._thumbsUpSvg}
+                                    Sim, encontrei
+                                </button>
+                                <button class="buscador-btn-feedback buscador-btn-feedback--filled" type="button" @click=${this.handleNaoEncontrei}>
+                                    ${this._starSvgMobile}
+                                    Não encontrei
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                ` : ""}
 
             </div>
         `;
