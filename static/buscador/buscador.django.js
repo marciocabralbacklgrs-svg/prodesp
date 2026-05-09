@@ -4036,6 +4036,7 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             .buscador-chatbox-panel { width: 100%; }
 
             .buscador-chatbox-header {
+                position: relative;
                 padding: var(--space-1) var(--space-2); /* 8px 16px */
                 align-items: flex-start;
             }
@@ -4043,11 +4044,20 @@ __publicField(_PtBuscadorAgentforce, "styles", [rawlineFont, i$4`
             .buscador-chatbox-header-left {
                 flex-wrap: wrap;
                 align-items: center;
-                gap: 2px;
+                gap: 4px;
+                padding-right: calc(24px + var(--space-1));
             }
 
             .buscador-chatbox-title {
                 white-space: normal;
+                min-width: 0;
+                padding-inline: 5px;
+            }
+
+            .buscador-header-actions {
+                position: absolute;
+                top: var(--space-1);
+                right: var(--space-2);
             }
 
             .buscador-ia-pill {
